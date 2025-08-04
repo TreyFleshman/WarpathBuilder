@@ -1,0 +1,30 @@
+/* Enhanced Units Grid Styles */
+
+.units-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+    padding: 24px 0 !important;
+}
+
+@media (max-width: 1200px) {
+    .units-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .units-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        padding: 16px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .units-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}

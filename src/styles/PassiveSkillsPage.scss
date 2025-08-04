@@ -1,0 +1,547 @@
+/* Passive Skills Page Styles */
+.passive-skills-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a2b1a 0%, #2d4a2d 50%, #1a2b1a 100%);
+    color: #e8f5e8;
+    padding: 0;
+    margin: 0;
+}
+
+.passive-skills-page .page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Section */
+.passive-skills-page .header-section {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.passive-skills-page .header-top {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.passive-skills-page .page-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.passive-skills-page .title-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.passive-skills-page .page-subtitle {
+    font-size: 1.2rem;
+    color: #c0c0c0;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Filters Section */
+.passive-skills-page .filters-section {
+    margin-bottom: 2rem;
+}
+
+.passive-skills-page .search-container {
+    margin-bottom: 1.5rem;
+}
+
+.passive-skills-page .search-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #e8f5e8;
+    font-size: 1.1rem;
+    backdrop-filter: blur(5px);
+}
+
+.passive-skills-page .search-input::placeholder {
+    color: #a0a0a0;
+}
+
+.passive-skills-page .search-input:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.passive-skills-page .filters-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.passive-skills-page .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.passive-skills-page .filter-group label {
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 1.1rem;
+}
+
+.passive-skills-page .filter-select {
+    padding: 0.8rem;
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #e8f5e8;
+    font-size: 1rem;
+    backdrop-filter: blur(5px);
+}
+
+.passive-skills-page .filter-control {
+    position: relative;
+}
+
+.passive-skills-page .filter-control input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #e8f5e8;
+    font-size: 1rem;
+    backdrop-filter: blur(5px);
+}
+
+.passive-skills-page .filter-hint {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Suggestions Dropdown */
+.passive-skills-page .suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ffd700;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.passive-skills-page .suggestion-item {
+    padding: 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.passive-skills-page .suggestion-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+/* Results Info */
+.passive-skills-page .results-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.passive-skills-page .results-count {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.passive-skills-page .clear-skill-filter {
+    background: rgba(255, 69, 69, 0.8);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.passive-skills-page .clear-skill-filter:hover {
+    background: rgba(255, 69, 69, 1);
+    transform: translateY(-1px);
+}
+
+/* Passive Skills Grid */
+.passive-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.passive-skill-card {
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.4), rgba(40, 40, 40, 0.4));
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.passive-skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.passive-skill-card:hover {
+    transform: translateY(-5px);
+    border-color: #ffd700;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+.passive-skill-card:hover::before {
+    opacity: 1;
+}
+
+.passive-skill-card.skill-matched {
+    border-color: #00ff88;
+    background: linear-gradient(145deg, rgba(0, 255, 136, 0.1), rgba(40, 40, 40, 0.4));
+}
+
+/* Skill Header */
+.passive-skill-card .skill-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.passive-skill-card .skill-icon-container {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid #ffd700;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.passive-skill-card .skill-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.passive-skill-card .skill-icon-fallback {
+    font-size: 2rem;
+    color: #ffd700;
+}
+
+.passive-skill-card .skill-info {
+    flex: 1;
+}
+
+.passive-skill-card .skill-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin: 0 0 0.5rem 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.passive-skill-card .skill-name:hover {
+    color: #ffed4e;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.passive-skill-card .skill-tag {
+    display: inline-block;
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+/* Specific styling for different tag types */
+.passive-skill-card .skill-tag[data-tag="Offense"] {
+    background: rgba(255, 69, 58, 0.2);
+    color: #ff453a;
+    border: 1px solid rgba(255, 69, 58, 0.4);
+}
+
+.passive-skill-card .skill-tag[data-tag="Protection"] {
+    background: rgba(52, 199, 89, 0.2);
+    color: #34c759;
+    border: 1px solid rgba(52, 199, 89, 0.4);
+}
+
+.passive-skill-card .skill-tag[data-tag="Special"] {
+    background: rgba(175, 82, 222, 0.2);
+    color: #af52de;
+    border: 1px solid rgba(175, 82, 222, 0.4);
+}
+
+.passive-skill-card .skill-tag[data-tag="Balanced"] {
+    background: rgba(255, 149, 0, 0.2);
+    color: #ff9500;
+    border: 1px solid rgba(255, 149, 0, 0.4);
+}
+
+.passive-skill-card .skill-match-indicator {
+    display: inline-block;
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    margin-left: 0.5rem;
+}
+
+/* Skill Description */
+.passive-skill-card .skill-description {
+    margin: 1rem 0;
+    color: #e8f5e8;
+    line-height: 1.6;
+}
+
+.passive-skill-card .skill-description p {
+    margin: 0 0 0.8rem 0;
+    color: #c0c0c0;
+}
+
+.passive-skill-card .skill-details {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #ffd700;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Officer Info */
+.passive-skill-card .skill-officer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.passive-skill-card .officer-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.passive-skill-card .officer-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.passive-skill-card .officer-avatar-placeholder {
+    font-size: 1.2rem;
+    color: #ffd700;
+}
+
+.passive-skill-card .officer-details {
+    flex: 1;
+}
+
+.passive-skill-card .officer-name {
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.passive-skill-card .officer-force-type {
+    color: #a0a0a0;
+    font-size: 0.85rem;
+}
+
+/* Skill Hover Modal */
+.passive-skills-page .skill-hover-modal {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.passive-skills-page .skill-hover-content {
+    color: #e8f5e8;
+}
+
+.passive-skills-page .skill-hover-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.passive-skills-page .skill-hover-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.passive-skills-page .skill-hover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.passive-skills-page .skill-hover-fallback {
+    font-size: 1.5rem;
+    color: #ffd700;
+}
+
+.passive-skills-page .skill-hover-title {
+    flex: 1;
+}
+
+.passive-skills-page .skill-hover-name {
+    margin: 0 0 0.3rem 0;
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+.passive-skills-page .skill-hover-tag {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+.passive-skills-page .skill-hover-description {
+    margin-bottom: 1rem;
+    color: #c0c0c0;
+    line-height: 1.5;
+}
+
+.passive-skills-page .skill-hover-details {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #ffd700;
+    margin-bottom: 1rem;
+}
+
+.passive-skills-page .skill-hover-details-title {
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.passive-skills-page .skill-hover-details-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #e8f5e8;
+}
+
+.passive-skills-page .skill-hover-officer {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.passive-skills-page .skill-hover-officer-title {
+    font-size: 0.8rem;
+    color: #a0a0a0;
+    margin-bottom: 0.2rem;
+}
+
+.passive-skills-page .skill-hover-officer-name {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .passive-skills-page .page-container {
+        padding: 1rem;
+    }
+    
+    .passive-skills-page .filters-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .passive-skills-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .passive-skills-page .page-title {
+        font-size: 2rem;
+    }
+    
+    .passive-skills-page .title-icon {
+        font-size: 2.5rem;
+    }
+}

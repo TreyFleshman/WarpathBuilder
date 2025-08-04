@@ -1,0 +1,244 @@
+// UnitsListPage Styles
+.units-list-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  min-height: 100vh;
+  color: #fff;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #d4af37;
+    
+    .header {
+      margin: 0;
+      color: #d4af37;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .formation-btn {
+      padding: 12px 24px;
+      background: linear-gradient(45deg, #00bcd4, #0097a7);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      font-family: 'Rajdhani', sans-serif;
+      
+      &:hover {
+        background: linear-gradient(45deg, #26c6da, #00bcd4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+    }
+  }
+
+  .header {
+    font-size: 28px;
+    border-bottom: 2px solid #d4af37;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    color: #d4af37;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .create-new-card {
+    border: 2px dashed #4a5d23;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2d3e1a 0%, #3a4f23 100%);
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #d4af37;
+    font-family: 'Rajdhani', sans-serif;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+
+    &:hover {
+      border-color: #d4af37;
+      background: linear-gradient(135deg, #3a4f23 0%, #4a5d23 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .text {
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+
+  .build-card {
+    border: 1px solid #4a5d23;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2d3e1a 0%, #3a4f23 100%);
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    position: relative;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+      border-color: #d4af37;
+    }
+
+    .delete-btn-container {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      gap: 8px;
+
+      .delete-btn {
+        padding: 6px 12px;
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+
+        &:hover {
+          background: linear-gradient(45deg, #e4606d, #dc3545);
+          transform: translateY(-1px);
+          box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+      }
+    }
+
+    .build-title {
+      margin: 0 0 12px 0;
+      font-size: 20px;
+      padding-right: 80px;
+      color: #d4af37;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .build-info {
+      color: #b0b0b0;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+
+      div {
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+    }
+
+    .officers-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .officers-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 600;
+        color: #d4af37;
+
+        .status-badge {
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+
+          &.complete {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+          }
+
+          &.incomplete {
+            background: linear-gradient(45deg, #ffc107, #ffb700);
+            color: #000;
+          }
+        }
+      }
+
+      .officers-list {
+        font-size: 14px;
+
+        .officer-card {
+          padding: 8px;
+          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+          border: 1px solid #4a5d23;
+          border-radius: 4px;
+          margin-top: 4px;
+
+          .officer-name {
+            font-weight: bold;
+            color: #00bcd4;
+            font-family: 'Rajdhani', sans-serif;
+          }
+
+          .officer-details {
+            color: #b0b0b0;
+            font-size: 12px;
+          }
+        }
+
+        .no-officers {
+          color: #888;
+          font-size: 14px;
+          text-align: center;
+          padding: 8px;
+          font-style: italic;
+        }
+      }
+    }
+  }
+}

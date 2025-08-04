@@ -1,0 +1,1140 @@
+// OfficersPage Styles
+.officers-page {
+  padding: 24px;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 100%);
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  position: relative;
+  
+  // Add subtle animated background pattern
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(0, 188, 212, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: backgroundShift 20s ease-in-out infinite alternate;
+  }
+  
+  @keyframes backgroundShift {
+    0% { transform: translateX(-10px) translateY(-10px); }
+    100% { transform: translateX(10px) translateY(10px); }
+  }
+
+  .page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  // Header Section
+  .header-section {
+    margin-bottom: 40px;
+
+    .header-top {
+      text-align: center;
+      margin-bottom: 32px;
+
+      .page-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 0 0 16px 0;
+        color: #d4af37;
+        font-size: 3rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+
+        .title-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      .page-subtitle {
+        color: #b0b0b0;
+        font-size: 1.3rem;
+        font-weight: 500;
+        margin: 0;
+        font-style: italic;
+        opacity: 0.9;
+      }
+    }
+
+    .filters-section {
+      background: linear-gradient(135deg, #2d3e1a 0%, #3a4f23 100%);
+      border: 1px solid #4a5d23;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+
+      .search-container {
+        margin-bottom: 20px;
+
+        .search-input {
+          width: 100%;
+          max-width: 500px;
+          margin: 0 auto;
+          display: block;
+          padding: 16px 20px;
+          border: 2px solid #4a5d23;
+          border-radius: 12px;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+          color: #fff;
+          font-size: 1.1rem;
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 500;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+          }
+
+          &::placeholder {
+            color: #888;
+          }
+        }
+      }
+
+      .filters-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+
+        .filter-group {
+          label {
+            display: block;
+            color: #00bcd4;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+          }
+
+          .filter-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5d23;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &:focus {
+              outline: none;
+              border-color: #d4af37;
+              box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+            }
+
+            option {
+              background: #2d2d2d;
+              color: #fff;
+            }
+          }
+        }
+      }
+
+      // Skill Filter Suggestions Dropdown
+      .filter-group {
+        position: relative;
+
+        .filter-control {
+          position: relative;
+
+          input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5d23;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &::placeholder {
+              color: #888;
+              font-style: italic;
+            }
+
+            &:focus {
+              outline: none;
+              border-color: #d4af37;
+              box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+            }
+          }
+
+          .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #4a5d23;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+
+            &.visible {
+              opacity: 1;
+              transform: translateY(0);
+              pointer-events: all;
+            }
+
+            .suggestion-item {
+              padding: 12px 16px;
+              cursor: pointer;
+              border-bottom: 1px solid #4a5d23;
+              transition: all 0.2s ease;
+              color: #b0b0b0;
+              font-size: 0.9rem;
+              font-weight: 500;
+
+              &:last-child {
+                border-bottom: none;
+              }
+
+              &:hover, &.highlighted {
+                background: linear-gradient(135deg, rgba(0, 188, 212, 0.2) 0%, rgba(74, 93, 35, 0.3) 100%);
+                color: #00bcd4;
+                transform: translateX(4px);
+              }
+
+              .suggestion-text {
+                .suggestion-main {
+                  color: #d4af37;
+                  font-weight: 600;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                }
+
+                .suggestion-desc {
+                  color: #888;
+                  font-size: 0.8rem;
+                  margin-top: 2px;
+                  font-style: italic;
+                }
+              }
+            }
+          }
+
+          // Custom scrollbar for suggestions
+          .suggestions-dropdown::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          .suggestions-dropdown::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+          }
+
+          .suggestions-dropdown::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #4a5d23, #d4af37);
+            border-radius: 3px;
+
+            &:hover {
+              background: linear-gradient(to bottom, #d4af37, #00bcd4);
+            }
+          }
+        }
+
+        .filter-hint {
+          color: #00bcd4;
+          font-size: 0.85rem;
+          font-style: italic;
+          margin-top: 8px;
+          text-align: center;
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .results-info {
+      text-align: center;
+
+      .results-count {
+        color: #00bcd4;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+
+        &.updating {
+          opacity: 0.6;
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+
+  .officers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+    animation: gridFadeIn 0.6s ease-out;
+
+    @keyframes gridFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  .officer-card {
+    background: linear-gradient(135deg, #2d3e1a 0%, #3a4f23 100%);
+    border: 2px solid #4a5d23;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    animation: cardFadeIn 0.5s ease-out;
+
+    @keyframes cardFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 188, 212, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      border-radius: 14px;
+    }
+
+    &:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(212, 175, 55, 0.2);
+      border-color: #d4af37;
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    .officer-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+
+      .officer-avatar {
+        flex-shrink: 0;
+
+        .officer-image {
+          width: 60px;
+          height: 60px;
+          border-radius: 12px;
+          object-fit: cover;
+          border: 3px solid #d4af37;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .officer-placeholder {
+          width: 60px;
+          height: 60px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #4a5d23, #3a4f23);
+          border: 3px solid #d4af37;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      .officer-info {
+        flex: 1;
+
+        .officer-name {
+          color: #d4af37;
+          font-size: 1.3rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          margin: 0 0 6px 0;
+          letter-spacing: 1px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .officer-rank {
+          color: #00bcd4;
+          font-size: 1rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+          letter-spacing: 0.5px;
+        }
+
+        .officer-army {
+          color: #888;
+          font-size: 0.9rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+
+    .officer-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+
+      .stat-item {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+        padding: 12px 8px;
+        border-radius: 8px;
+        border: 1px solid #4a5d23;
+        text-align: center;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #00bcd4;
+          transform: translateY(-2px);
+        }
+
+        .stat-icon {
+          font-size: 1.2rem;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        .stat-label {
+          font-size: 0.8rem;
+          color: #888;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 2px;
+          font-weight: 600;
+        }
+
+        .stat-value {
+          color: #d4af37;
+          font-weight: 700;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .officer-skills-preview {
+      position: relative;
+      z-index: 2;
+
+      .skills-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+
+        @media (max-width: 480px) {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 6px;
+        }
+
+        .skill-item {
+          position: relative;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(74, 93, 35, 0.3) 100%);
+          border: 1px solid #4a5d23;
+          border-radius: 8px;
+          padding: 8px;
+          text-align: center;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          min-height: 70px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+
+          &:hover {
+            border-color: #00bcd4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+          }
+
+          &.skill-matched {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(74, 93, 35, 0.4) 100%);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+
+            &:hover {
+              box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5);
+            }
+
+            .skill-name {
+              color: #d4af37;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            }
+          }
+
+          &.active {
+            border-color: #00bcd4;
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.2) 0%, rgba(74, 93, 35, 0.3) 100%);
+
+            .skill-name {
+              color: #00bcd4;
+            }
+          }
+
+          &.awakened {
+            border-color: #dc3545;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2) 0%, rgba(74, 93, 35, 0.3) 100%);
+
+            .skill-name {
+              color: #ff6b6b;
+            }
+          }
+
+          &.passive {
+            border-color: #4a5d23;
+            background: linear-gradient(135deg, rgba(74, 93, 35, 0.3) 0%, rgba(0, 0, 0, 0.4) 100%);
+
+            .skill-name {
+              color: #9ccc65;
+            }
+          }
+
+          .skill-icon-container {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+
+            .skill-image {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 6px;
+              border: 1px solid rgba(212, 175, 55, 0.3);
+              transition: all 0.3s ease;
+
+              &:hover {
+                border-color: rgba(212, 175, 55, 0.6);
+                transform: scale(1.05);
+              }
+            }
+
+            .skill-icon-fallback {
+              font-size: 1.4rem;
+              opacity: 0.8;
+            }
+          }
+
+          .skill-name {
+            color: #b0b0b0;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            word-break: break-word;
+            transition: color 0.3s ease;
+            text-align: center;
+            max-width: 100%;
+          }
+
+          .skill-tag {
+            color: #888;
+            font-size: 0.6rem;
+            font-style: italic;
+            margin-top: 2px;
+          }
+
+          .skill-match-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            color: #d4af37;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .skills-summary {
+        color: #888;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 8px;
+      }
+    }
+  }
+
+  // Officer Detail Modal
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { 
+      opacity: 0;
+      backdrop-filter: blur(0px);
+    }
+    to { 
+      opacity: 1;
+      backdrop-filter: blur(8px);
+    }
+  }
+
+  .officer-detail-modal {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 2px solid #4a5d23;
+    border-radius: 20px;
+    max-width: 900px;
+    max-height: 90vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(212, 175, 55, 0.2);
+    animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid #4a5d23;
+      background: linear-gradient(135deg, #2d3e1a 0%, #3a4f23 100%);
+
+      h2 {
+        color: #d4af37;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .close-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #c82333;
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .modal-content {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+
+      .officer-detail-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 32px;
+
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .officer-image-section {
+          text-align: center;
+
+          .officer-detail-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid #d4af37;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+          }
+
+          .officer-detail-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4a5d23, #3a4f23);
+            border: 3px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            margin: 0 auto 20px;
+          }
+
+          .officer-basic-info {
+            .detail-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 8px 0;
+              border-bottom: 1px solid #4a5d23;
+
+              .detail-label {
+                color: #00bcd4;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 0.9rem;
+              }
+
+              .detail-value {
+                color: #d4af37;
+                font-weight: 600;
+                text-align: right;
+                font-size: 0.9rem;
+              }
+            }
+          }
+        }
+
+        .officer-skills-section {
+          h3 {
+            color: #d4af37;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 20px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+          }
+
+          .skills-categories {
+            .skill-category {
+              margin-bottom: 24px;
+
+              .skill-category-title {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: #00bcd4;
+                font-size: 1.2rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 0 0 12px 0;
+                padding-bottom: 8px;
+                border-bottom: 2px solid #4a5d23;
+
+                .skill-icon {
+                  font-size: 1.4rem;
+                }
+              }
+
+              .skills-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                .skill-item {
+                  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+                  border: 1px solid #4a5d23;
+                  border-radius: 12px;
+                  padding: 16px;
+                  transition: all 0.3s ease;
+
+                  &:hover {
+                    border-color: #00bcd4;
+                    transform: translateX(4px);
+                  }
+
+                  &.modal-skill {
+                    .skill-header {
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                      margin-bottom: 8px;
+
+                      .skill-icon-container {
+                        flex-shrink: 0;
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: linear-gradient(135deg, rgba(74, 93, 35, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+                        border: 1px solid rgba(212, 175, 55, 0.3);
+                        border-radius: 8px;
+
+                        .skill-image {
+                          width: 100%;
+                          height: 100%;
+                          object-fit: cover;
+                          border-radius: 6px;
+                          transition: all 0.3s ease;
+
+                          &:hover {
+                            transform: scale(1.05);
+                          }
+                        }
+
+                        .skill-icon-fallback {
+                          font-size: 1.6rem;
+                          opacity: 0.8;
+                        }
+                      }
+
+                      .skill-name {
+                        color: #d4af37;
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin: 0;
+                        flex: 1;
+                      }
+                    }
+                  }
+
+                  .skill-name {
+                    color: #d4af37;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin-bottom: 6px;
+                  }
+
+                  .skill-description {
+                    color: #b0b0b0;
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                    font-weight: 500;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Skill Hover Modal
+  .skill-hover-modal {
+    z-index: 999999 !important;
+    position: fixed !important;
+    pointer-events: none !important;
+    
+    .skill-hover-content {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      border: 2px solid #d4af37;
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 280px;
+      max-width: 400px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(212, 175, 55, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      animation: skillHoverFadeIn 0.2s ease-out;
+      position: relative;
+      z-index: 999999;
+
+      .skill-hover-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+
+        .skill-hover-icon {
+          flex-shrink: 0;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, rgba(74, 93, 35, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+          border: 1px solid rgba(212, 175, 55, 0.4);
+          border-radius: 8px;
+
+          .skill-hover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+          }
+
+          .skill-hover-fallback {
+            font-size: 1.8rem;
+            opacity: 0.8;
+          }
+        }
+
+        .skill-hover-title {
+          flex: 1;
+
+          .skill-hover-name {
+            color: #d4af37;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 4px 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+          }
+
+          .skill-hover-tag {
+            color: #00bcd4;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            font-style: italic;
+          }
+        }
+      }
+
+      .skill-hover-description {
+        color: #b0b0b0;
+        font-size: 1rem;
+        line-height: 1.4;
+        font-weight: 500;
+        margin-bottom: 12px;
+        text-align: left;
+      }
+
+      .skill-hover-details {
+        .skill-hover-details-title {
+          color: #d4af37;
+          font-size: 0.9rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 6px;
+        }
+
+        .skill-hover-details-content {
+          color: #9ccc65;
+          font-size: 0.9rem;
+          line-height: 1.3;
+          font-weight: 500;
+          
+          // Style for HTML content
+          br {
+            line-height: 1.6;
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes skillHoverFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-100%) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-100%) translateY(0);
+    }
+  }
+
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .header-section {
+      .header-top {
+        .page-title {
+          font-size: 2.5rem;
+        }
+
+        .page-subtitle {
+          font-size: 1.1rem;
+        }
+      }
+
+      .filters-section {
+        padding: 20px 16px;
+
+        .filters-row {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+      }
+    }
+
+    .officer-card {
+      padding: 20px;
+
+      .officer-header {
+        .officer-avatar {
+          .officer-image,
+          .officer-placeholder {
+            width: 50px;
+            height: 50px;
+          }
+        }
+
+        .officer-info {
+          .officer-name {
+            font-size: 1.1rem;
+          }
+        }
+      }
+
+      .officer-stats {
+        gap: 8px;
+
+        .stat-item {
+          padding: 10px 6px;
+
+          .stat-icon {
+            font-size: 1rem;
+          }
+
+          .stat-label {
+            font-size: 0.7rem;
+          }
+
+          .stat-value {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .officer-skills-preview {
+        .skills-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+
+          .skill-preview {
+            min-height: 50px;
+            padding: 6px 3px;
+
+            .skill-name {
+              font-size: 0.65rem;
+            }
+
+            .skill-tooltip {
+              min-width: 200px;
+              max-width: 280px;
+              padding: 10px;
+
+              .tooltip-skill-name {
+                font-size: 0.8rem;
+              }
+
+              .tooltip-skill-desc {
+                font-size: 0.75rem;
+              }
+            }
+          }
+        }
+
+        .skills-summary {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+}
