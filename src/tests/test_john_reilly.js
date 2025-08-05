@@ -6,24 +6,24 @@ const officersData = require('../database/officer.json');
 
 // Mock the enhanced skillDataParser functions
 const REPLACEMENT_PATTERNS = {
-    "Dmg Buff": [
+    'Dmg Buff': [
         {
             pattern: /(\+?\d+(?:\.\d+)?%?)/g,
-            replacement: (newValue, groups) => newValue.includes('%') ? newValue : `${newValue}%`
-        }
+            replacement: (newValue, groups) => (newValue.includes('%') ? newValue : `${newValue}%`),
+        },
     ],
-    "Dmg Reduction": [
+    'Dmg Reduction': [
         {
             pattern: /(\+?\d+(?:\.\d+)?%?)/g,
-            replacement: (newValue, groups) => newValue.includes('%') ? newValue : `${newValue}%`
-        }
-    ]
+            replacement: (newValue, groups) => (newValue.includes('%') ? newValue : `${newValue}%`),
+        },
+    ],
 };
 
 /**
  * Escape special regex characters
  */
-const escapeRegex = (string) => {
+const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
@@ -194,8 +194,8 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
         console.log(`  Values: [${values.join(', ')}]`);
 
         // Strategy 1: Use predefined replacement patterns for known skill types
-        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(([patternKey]) =>
-            key.includes(patternKey) || key === patternKey
+        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(
+            ([patternKey]) => key.includes(patternKey) || key === patternKey
         );
 
         if (patternConfig) {
@@ -208,7 +208,13 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
             console.log(`  ✅ Used predefined pattern for ${key}`);
         } else {
             // Strategy 2: Intelligent auto-detection for unknown patterns
-            currentData = applyIntelligentUpgrade(currentData, key, currentValue, values[0], values);
+            currentData = applyIntelligentUpgrade(
+                currentData,
+                key,
+                currentValue,
+                values[0],
+                values
+            );
         }
     });
 
@@ -218,7 +224,7 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
 /**
  * Parse upgrade data from skill data array
  */
-const parseUpgradeData = (dataArray) => {
+const parseUpgradeData = dataArray => {
     const upgradeInfo = {};
 
     dataArray.forEach(item => {
@@ -232,7 +238,10 @@ const parseUpgradeData = (dataArray) => {
                 if (trimmedLine.includes(':') && trimmedLine.includes('/')) {
                     const [label, values] = trimmedLine.split(':');
                     if (values?.includes('/')) {
-                        const valueArray = values.trim().split('/').map(v => v.trim());
+                        const valueArray = values
+                            .trim()
+                            .split('/')
+                            .map(v => v.trim());
                         if (valueArray.length >= 5) {
                             upgradeInfo[label.trim()] = valueArray;
                         }
@@ -242,7 +251,9 @@ const parseUpgradeData = (dataArray) => {
                 // Handle non-colon format: "Dmg Coefficient 550/650/800/950/1200"
                 else if (trimmedLine.includes('/')) {
                     // Match multi-word labels: "Word Word numbers/numbers/numbers"
-                    const match = trimmedLine.match(/^([A-Za-z\s]+?)\s+(\d+(?:\.\d+)?(?:[%]?)\/.*)/);
+                    const match = trimmedLine.match(
+                        /^([A-Za-z\s]+?)\s+(\d+(?:\.\d+)?(?:[%]?)\/.*)/
+                    );
                     if (match) {
                         const valueArray = match[2].split('/').map(v => v.trim());
                         if (valueArray.length >= 5) {
@@ -273,13 +284,13 @@ const parseUpgradeData = (dataArray) => {
 
 // Test John Reilly specifically
 const testJohnReilly = () => {
-    console.log("🎖️  DETAILED TESTING: John Reilly (Vortex)");
-    console.log("=" * 60);
+    console.log('🎖️  DETAILED TESTING: John Reilly (Vortex)');
+    console.log('=' * 60);
 
-    const johnReilly = officersData.find(officer => officer.name === "John Reilly");
+    const johnReilly = officersData.find(officer => officer.name === 'John Reilly');
 
     if (!johnReilly) {
-        console.log("❌ John Reilly not found in officers data!");
+        console.log('❌ John Reilly not found in officers data!');
         return;
     }
 
@@ -292,7 +303,7 @@ const testJohnReilly = () => {
         const upgradeData = parseUpgradeData(skill.data);
 
         if (Object.keys(upgradeData).length === 0) {
-            console.log("ℹ️  No upgrade data (static skill)");
+            console.log('ℹ️  No upgrade data (static skill)');
         } else {
             console.log(`📊 Found upgrade data: ${JSON.stringify(upgradeData)}`);
             console.log(`📝 Base skill text: "${skill.data[0]}"`);
@@ -304,7 +315,9 @@ const testJohnReilly = () => {
                 const result = applyUpgradeValues(baseData, { [upgradeKey]: values }, testLevel);
 
                 const success = result !== baseData;
-                console.log(`  ${success ? '✅ SUCCESS' : '❌ FAILED'}: Text was ${success ? 'modified' : 'unchanged'}`);
+                console.log(
+                    `  ${success ? '✅ SUCCESS' : '❌ FAILED'}: Text was ${success ? 'modified' : 'unchanged'}`
+                );
 
                 if (!success) {
                     console.log(`  🔍 Debug info:`);

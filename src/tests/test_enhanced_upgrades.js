@@ -1,26 +1,28 @@
 // Quick test for the enhanced upgrade system
 const testData = [
     {
-        name: "Fire Suppression - Randall Miller",
-        skillText: "Troop Firepower +12%.",
-        upgradeKey: "Firepower Gain",
-        baseValue: "10%",
-        newValue: "14%"
+        name: 'Fire Suppression - Randall Miller',
+        skillText: 'Troop Firepower +12%.',
+        upgradeKey: 'Firepower Gain',
+        baseValue: '10%',
+        newValue: '14%',
     },
     {
         name: "The Lord's Domain - Bekoe Yeboah",
-        skillText: "If this Officer is in a Tank or Helicopter Troop, it gains a 1 0% bonus to HP and recovers 0.5% HP per second while in the field and not in combat.",
-        upgradeKey: "HP Buff",
-        baseValue: "10%",
-        newValue: "18%"
+        skillText:
+            'If this Officer is in a Tank or Helicopter Troop, it gains a 1 0% bonus to HP and recovers 0.5% HP per second while in the field and not in combat.',
+        upgradeKey: 'HP Buff',
+        baseValue: '10%',
+        newValue: '18%',
     },
     {
-        name: "Battle Command - Percy",
-        skillText: "Prep Time: 8s. Percy inspires her Troops, inflicting enemy Troop Dmg(Dmg Coefficient 800).Troop Firepower +5% for 8s.",
-        upgradeKey: "Firepower Gain",
-        baseValue: "3%",
-        newValue: "5%"
-    }
+        name: 'Battle Command - Percy',
+        skillText:
+            'Prep Time: 8s. Percy inspires her Troops, inflicting enemy Troop Dmg(Dmg Coefficient 800).Troop Firepower +5% for 8s.',
+        upgradeKey: 'Firepower Gain',
+        baseValue: '3%',
+        newValue: '5%',
+    },
 ];
 
 // Enhanced upgrade function (copied from our implementation)
@@ -33,7 +35,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
     let result = data;
     let matched = false;
 
-    console.log(`  🔍 Debug: Looking for "${baseValue}" to replace with "${newValue}" in "${data}"`);
+    console.log(
+        `  🔍 Debug: Looking for "${baseValue}" to replace with "${newValue}" in "${data}"`
+    );
 
     // Strategy 1: Try to match any value from the upgrade array (not just base value)
     // This handles cases where skill text shows current level instead of base level
@@ -48,7 +52,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
             if (data.includes(valueWithPercent)) {
                 result = data.replace(valueWithPercent, newValue);
                 matched = true;
-                console.log(`  ✅ Strategy 1A (exact % match): Found "${valueWithPercent}" → "${newValue}"`);
+                console.log(
+                    `  ✅ Strategy 1A (exact % match): Found "${valueWithPercent}" → "${newValue}"`
+                );
                 break;
             }
 
@@ -58,7 +64,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
                 const replacement = newValue.includes('%') ? `+${newValue}` : `+${newValue}%`;
                 result = data.replace(plusPattern, replacement);
                 matched = true;
-                console.log(`  ✅ Strategy 1B (plus pattern): Found "${plusPattern}" → "${replacement}"`);
+                console.log(
+                    `  ✅ Strategy 1B (plus pattern): Found "${plusPattern}" → "${replacement}"`
+                );
                 break;
             }
         }
@@ -82,7 +90,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
         if (data.includes(baseValueWithPercent)) {
             result = data.replace(baseValueWithPercent, newValue);
             matched = true;
-            console.log(`  ✅ Strategy 3A (base % match): Found "${baseValueWithPercent}" → "${newValue}"`);
+            console.log(
+                `  ✅ Strategy 3A (base % match): Found "${baseValueWithPercent}" → "${newValue}"`
+            );
         }
     }
 
@@ -93,7 +103,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
             const replacement = newValue.includes('%') ? `+${newValue}` : `+${newValue}%`;
             result = data.replace(plusPattern, replacement);
             matched = true;
-            console.log(`  ✅ Strategy 4 (base plus pattern): Found "${plusPattern}" → "${replacement}"`);
+            console.log(
+                `  ✅ Strategy 4 (base plus pattern): Found "${plusPattern}" → "${replacement}"`
+            );
         }
     }
 
@@ -155,7 +167,7 @@ const isNumberClose = (num1, num2, tolerance = 0.1) => {
     return Math.abs(n1 - n2) <= tolerance;
 };
 
-const escapeRegex = (string) => {
+const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
@@ -168,9 +180,15 @@ testData.forEach((test, index) => {
     console.log(`   Upgrade: ${test.upgradeKey} from "${test.baseValue}" to "${test.newValue}"`);
 
     // Add mock upgrade array for testing
-    const mockUpgradeArray = ["20%", "25%", "30%", "40%", "50%"];
+    const mockUpgradeArray = ['20%', '25%', '30%', '40%', '50%'];
 
-    const result = applyIntelligentUpgrade(test.skillText, test.upgradeKey, test.newValue, test.baseValue, mockUpgradeArray);
+    const result = applyIntelligentUpgrade(
+        test.skillText,
+        test.upgradeKey,
+        test.newValue,
+        test.baseValue,
+        mockUpgradeArray
+    );
 
     if (result === test.skillText) {
         console.log(`   ❌ FAILED: No changes made`);

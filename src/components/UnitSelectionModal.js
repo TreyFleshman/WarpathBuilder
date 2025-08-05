@@ -1,57 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-
-// Function to render star display based on grade
-const renderStars = (grade) => {
-    const gradeNum = parseFloat(grade);
-    const baseGrade = Math.floor(gradeNum);
-    const decimal = Math.round((gradeNum % 1) * 10) / 10; // Get decimal part (0.1, 0.2, etc.)
-
-    let stars = '';
-    let color = '';
-    let numStars = 0;
-
-    if (gradeNum >= 4 && gradeNum < 6) {
-        // Silver stars (4-5.x)
-        color = '#c0c0c0'; // Silver
-        numStars = baseGrade;
-    } else if (gradeNum >= 6 && gradeNum < 8) {
-        // Gold stars (6-7.x)
-        color = '#ffd700'; // Gold
-        if (gradeNum >= 6 && gradeNum < 7) {
-            numStars = 1; // Single gold star for 6.x
-        } else {
-            numStars = 2; // Double gold star for 7.x
-        }
-    } else if (gradeNum >= 8) {
-        // Blue stars (8+)
-        color = '#4682b4'; // Steel blue
-        if (gradeNum >= 8 && gradeNum < 9) {
-            numStars = 1; // Single blue star for 8.x
-        } else {
-            numStars = 2; // Double blue star for 9.x
-        }
-    }
-
-    // Generate stars
-    for (let i = 0; i < numStars; i++) {
-        stars += '★';
-    }
-
-    // Add chevrons for decimal grades
-    let chevron = '';
-    if (decimal === 0.1) {
-        chevron = '>';
-    } else if (decimal === 0.2) {
-        chevron = '>>';
-    }
-
-    return (
-        <span style={{ color, fontWeight: 'bold' }}>
-            {stars}{chevron}
-        </span>
-    );
-};
+import { renderStars } from '../utils/gradeUtils';
 
 const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, selectedUnitId }) => {
     const [selectedCamp, setSelectedCamp] = useState('LIBERTY');
@@ -89,10 +37,7 @@ const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, select
                                 ))}
                             </div>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="close-button"
-                        >
+                        <button onClick={onClose} className="close-button">
                             ×
                         </button>
                     </div>
@@ -100,7 +45,9 @@ const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, select
                     {/* Unit Type Selection */}
                     <div className="type-filters">
                         {Object.entries(unitsByType)
-                            .filter(([, units]) => units.some(unit => unit.camps.toUpperCase() === selectedCamp))
+                            .filter(([, units]) =>
+                                units.some(unit => unit.camps.toUpperCase() === selectedCamp)
+                            )
                             .map(([type]) => (
                                 <button
                                     key={type}
@@ -114,9 +61,10 @@ const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, select
 
                     {/* Filtered Units Display */}
                     <div className="units-grid">
-                        {unitsByType[selectedType]?.filter(unit => unit.camps.toUpperCase() === selectedCamp)
+                        {unitsByType[selectedType]
+                            ?.filter(unit => unit.camps.toUpperCase() === selectedCamp)
                             .sort((a, b) => b.grades + a.grades)
-                            .map((unit) => (
+                            .map(unit => (
                                 <div
                                     key={unit.id}
                                     onClick={() => onUnitSelect(unit)}
@@ -133,15 +81,23 @@ const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, select
                                         <div className="unit-name">
                                             {unit.units_name || unit.units}
                                         </div>
-                                        <div className="unit-detail">Grade: {unit.grades >= 4 ? renderStars(unit.grades) : unit.grades}</div>
-                                        <div className="unit-detail">FP: {unit.firepower.toLocaleString()}</div>
-                                        <div className="unit-detail">Health: {
-                                            unit.health && unit.health !== ""
+                                        <div className="unit-detail">
+                                            Grade:{' '}
+                                            {unit.grades >= 4
+                                                ? renderStars(unit.grades)
+                                                : unit.grades}
+                                        </div>
+                                        <div className="unit-detail">
+                                            FP: {unit.firepower.toLocaleString()}
+                                        </div>
+                                        <div className="unit-detail">
+                                            Health:{' '}
+                                            {unit.health && unit.health !== ''
                                                 ? unit.health.toLocaleString()
-                                                : unit.durability && unit.durability !== ""
-                                                    ? unit.durability.toLocaleString()
-                                                    : "N/A"
-                                        }</div>
+                                                : unit.durability && unit.durability !== ''
+                                                  ? unit.durability.toLocaleString()
+                                                  : 'N/A'}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -149,16 +105,20 @@ const UnitSelectionModal = ({ isOpen, onClose, onUnitSelect, unitsByType, select
 
                     <div className="selection-summary">
                         <div className="summary-item">
-                            <span style={{ color: '#c0c0c0' }}>★★★★★</span> = Grade 4-5 (Silver stars)
+                            <span style={{ color: '#c0c0c0' }}>★★★★★</span> = Grade 4-5 (Silver
+                            stars)
                         </div>
                         <div className="summary-item">
-                            <span style={{ color: '#ffd700' }}>★</span> = Grade 6, <span style={{ color: '#ffd700' }}>★★</span> = Grade 7 (Gold stars)
+                            <span style={{ color: '#ffd700' }}>★</span> = Grade 6,{' '}
+                            <span style={{ color: '#ffd700' }}>★★</span> = Grade 7 (Gold stars)
                         </div>
                         <div className="summary-item">
-                            <span style={{ color: '#4682b4' }}>★</span> = Grade 8, <span style={{ color: '#4682b4' }}>★★</span> = Grade 9+ (Blue stars)
+                            <span style={{ color: '#4682b4' }}>★</span> = Grade 8,{' '}
+                            <span style={{ color: '#4682b4' }}>★★</span> = Grade 9+ (Blue stars)
                         </div>
                         <div className="summary-item">
-                            <span style={{ color: '#ffd700' }}>★{'>'}</span> = .1 grade, <span style={{ color: '#ffd700' }}>★{'>>'}</span> = .2 grade
+                            <span style={{ color: '#ffd700' }}>★{'>'}</span> = .1 grade,{' '}
+                            <span style={{ color: '#ffd700' }}>★{'>>'}</span> = .2 grade
                         </div>
                         <div className="summary-item">
                             <span>FP = Firepower</span>

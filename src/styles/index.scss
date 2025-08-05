@@ -4,95 +4,97 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&display=swap');
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html {
-  overflow-x: hidden;
-  scroll-behavior: smooth;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  font-family: var(--font-command);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  position: relative;
-  
-  // Military background texture
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(45, 74, 43, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-  }
+    margin: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: var(--font-command);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    position: relative;
+
+    // Military background texture
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 80%, rgba(45, 74, 43, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
 }
 
 code {
-  font-family: var(--font-tactical);
+    font-family: var(--font-tactical);
 }
 
 // Global link styles
 a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-fast);
 
-  &:hover {
-    color: var(--primary-hover);
-  }
+    &:hover {
+        color: var(--primary-hover);
+    }
 }
 
 // Global button reset
 button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-  transition: all var(--transition-fast);
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    transition: all var(--transition-fast);
 
-  &:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-  }
+    &:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
 }
 
 // Global input styles
-input, textarea, select {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+input,
+textarea,
+select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 // Scrollbar styling for webkit browsers
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+    background: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+    background: #c1c1c1;
+    border-radius: 4px;
 
-  &:hover {
-    background: #a8a8a8;
-  }
+    &:hover {
+        background: #a8a8a8;
+    }
 }

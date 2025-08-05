@@ -4,7 +4,7 @@ const fs = require('fs');
 const officersData = require('../database/officer.json');
 
 // Copy the actual functions from skillDataParser.js
-const parseUpgradeData = (dataArray) => {
+const parseUpgradeData = dataArray => {
     const upgradeInfo = {};
 
     dataArray.forEach(item => {
@@ -22,18 +22,21 @@ const parseUpgradeData = (dataArray) => {
     return upgradeInfo;
 };
 
-const parseUpgradeLine = (line) => {
+const parseUpgradeLine = line => {
     if (!line || line.includes('UPGRADE PREVIEW')) return null;
 
     // Handle colon format: "Load Speed Buff: 4%/5%/6%/7%/10%"
     if (line.includes(':') && line.includes('/')) {
         const [label, values] = line.split(':');
         if (values?.includes('/')) {
-            const valueArray = values.trim().split('/').map(v => v.trim());
+            const valueArray = values
+                .trim()
+                .split('/')
+                .map(v => v.trim());
             if (valueArray.length >= 5) {
                 return {
                     label: label.trim(),
-                    values: valueArray
+                    values: valueArray,
                 };
             }
         }
@@ -48,7 +51,7 @@ const parseUpgradeLine = (line) => {
             if (valueArray.length >= 5) {
                 return {
                     label: match[1].trim(),
-                    values: valueArray
+                    values: valueArray,
                 };
             }
         }
@@ -64,7 +67,7 @@ const parseUpgradeLine = (line) => {
                 if (valueArray.length >= 5) {
                     return {
                         label,
-                        values: valueArray
+                        values: valueArray,
                     };
                 }
             }
@@ -74,7 +77,7 @@ const parseUpgradeLine = (line) => {
     return null;
 };
 
-const escapeRegex = (string) => {
+const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
@@ -221,15 +224,15 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
 };
 
 // Find John Reilly
-const johnReilly = officersData.find(officer => officer.name === "John Reilly");
+const johnReilly = officersData.find(officer => officer.name === 'John Reilly');
 
 if (!johnReilly) {
-    console.log("❌ John Reilly not found!");
+    console.log('❌ John Reilly not found!');
     process.exit(1);
 }
 
-console.log("🎖️  REAL APPLICATION TEST: John Reilly - Wall of Steel");
-console.log("=" * 60);
+console.log('🎖️  REAL APPLICATION TEST: John Reilly - Wall of Steel');
+console.log('=' * 60);
 
 // Get the Wall of Steel skill (index 3)
 const wallOfSteelSkill = johnReilly.jn[3];

@@ -1,56 +1,42 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import officersData from '../database/officer.json';
+import officersDataRaw from '../database/officer.json';
 import unitsData from '../database/units.json';
 import UnitSelectionModal from '../components/UnitSelectionModal';
 import OfficerSelectionModal from '../components/OfficerSelectionModal';
+import PassiveSelectionModal from '../components/PassiveSelectionModal';
 import { AssignedOfficerCard } from '../components/OfficerCard';
+import { OFFICER_IMAGE_BASE_URL } from '../utils/constants';
+import { renderStars } from '../utils/gradeUtils';
 
-// Function to render star display based on grade
-const renderStars = (grade) => {
-    const gradeNum = parseFloat(grade);
-    const baseGrade = Math.floor(gradeNum);
-    const decimal = Math.round((gradeNum % 1) * 10) / 10;
+// Convert officers object to array format
+const officersData = Object.values(officersDataRaw);
 
-    let stars = '';
-    let color = '';
-    let numStars = 0;
-
-    if (gradeNum >= 4 && gradeNum < 6) {
-        color = '#c0c0c0'; // Silver
-        numStars = baseGrade;
-    } else if (gradeNum >= 6 && gradeNum < 8) {
-        color = '#ffd700'; // Gold
-        if (gradeNum >= 6 && gradeNum < 7) {
-            numStars = 1;
-        } else {
-            numStars = 2;
-        }
-    } else if (gradeNum >= 8) {
-        color = '#4682b4'; // Steel blue
-        if (gradeNum >= 8 && gradeNum < 9) {
-            numStars = 1;
-        } else {
-            numStars = 2;
-        }
+// Helper function to format skill levels for display
+const formatSkillLevels = skillLevels => {
+    if (!skillLevels || typeof skillLevels !== 'object') {
+        return ''; // No skill levels to display
     }
 
-    for (let i = 0; i < numStars; i++) {
-        stars += '★';
-    }
+    // Extract the first 4 skill levels (excluding revival skill)
+    const levels = [
+        skillLevels[0] || 1,
+        skillLevels[1] || 1,
+        skillLevels[2] || 1,
+        skillLevels[3] || 1,
+    ];
 
-    let chevron = '';
-    if (decimal === 0.1) {
-        chevron = '>';
-    } else if (decimal === 0.2) {
-        chevron = '>>';
-    }
+    return ` (${levels.join('-')})`;
+};
 
-    return (
-        <span style={{ color, fontWeight: 'bold' }}>
-            {stars}{chevron}
-        </span>
-    );
+// Helper function to get officer ID from officer data
+const getOfficerId = officerData => {
+    return typeof officerData === 'object' ? officerData.id : officerData;
+};
+
+// Helper function to get officer skill levels from officer data
+const getOfficerSkillLevels = officerData => {
+    return typeof officerData === 'object' ? officerData.skillLevels : null;
 };
 
 const BuildCreatorPage = () => {
@@ -62,17 +48,17 @@ const BuildCreatorPage = () => {
         return unitsData.reduce((acc, unit) => {
             // Clean up unit type by removing newlines and normalizing spaces
             const type = (unit.units || 'Unknown')
-                .replace(/\n/g, ' ')  // Replace newlines with spaces
+                .replace(/\n/g, ' ') // Replace newlines with spaces
                 .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-                .trim()               // Remove leading/trailing spaces
-                .toUpperCase();       // Convert to uppercase
+                .trim() // Remove leading/trailing spaces
+                .toUpperCase(); // Convert to uppercase
 
             if (!acc[type]) {
                 acc[type] = [];
             }
             acc[type].push({
                 ...unit,
-                camps: (unit.camps || '').toUpperCase()
+                camps: (unit.camps || '').toUpperCase(),
             });
             return acc;
         }, {});
@@ -84,18 +70,22 @@ const BuildCreatorPage = () => {
         name: '',
         description: '',
         groundUnits: Array(5).fill(null), // 5 ground unit slots
-        airUnits: Array(3).fill(null),    // 3 air unit slots
+        airUnits: Array(3).fill(null), // 3 air unit slots
         createdAt: null,
-        updatedAt: null
+        updatedAt: null,
     });
 
     const [availableOfficers, setAvailableOfficers] = useState([]);
     const [error, setError] = useState(null);
     const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
     const [isOfficerModalOpen, setIsOfficerModalOpen] = useState(false);
-    const [currentSelection, setCurrentSelection] = useState(null); // { type: 'ground'|'air', index: number, role: 'unit'|'captain'|'aide' }
+    const [isPassiveModalOpen, setIsPassiveModalOpen] = useState(false);
+    const [currentSelection, setCurrentSelection] = useState(null); // { type: 'ground'|'air', index: number, role: 'unit'|'captain'|'aide'|'passive', slotNumber?: number }
     const [isOfficerDetailsOpen, setIsOfficerDetailsOpen] = useState(false);
     const [selectedOfficerForDetails, setSelectedOfficerForDetails] = useState(null);
+    const [hoveredPassive, setHoveredPassive] = useState(null);
+    const [hoveredSkill, setHoveredSkill] = useState(null);
+    const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
 
     // Filter units by service compatibility when modal is open
     const filteredUnitsByType = useMemo(() => {
@@ -140,7 +130,7 @@ const BuildCreatorPage = () => {
                     groundUnits: Array(5).fill(null),
                     airUnits: Array(3).fill(null),
                     createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
+                    updatedAt: new Date().toISOString(),
                 });
                 return;
             }
@@ -167,16 +157,36 @@ const BuildCreatorPage = () => {
 
         // Collect all assigned officers from current build
         [...build.groundUnits, ...build.airUnits].forEach(unit => {
-            if (unit?.captain) assignedOfficerIds.add(unit.captain);
-            if (unit?.aide) assignedOfficerIds.add(unit.aide);
+            if (unit?.captain) {
+                // Handle both old format (just ID) and new format (object with id)
+                const captainId = typeof unit.captain === 'object' ? unit.captain.id : unit.captain;
+                assignedOfficerIds.add(captainId);
+            }
+            if (unit?.aide) {
+                // Handle both old format (just ID) and new format (object with id)
+                const aideId = typeof unit.aide === 'object' ? unit.aide.id : unit.aide;
+                assignedOfficerIds.add(aideId);
+            }
         });
 
         // Filter officers based on assignment status and army compatibility
         const available = officersData.filter(officer => {
             // Check if officer is already assigned (unless it's the current unit's officer)
-            const isAlreadyAssigned = assignedOfficerIds.has(officer.id) &&
-                !(currentSelection?.unit?.captain === officer.id) &&
-                !(currentSelection?.unit?.aide === officer.id);
+            const currentCaptainId = currentSelection?.unit?.captain
+                ? typeof currentSelection.unit.captain === 'object'
+                    ? currentSelection.unit.captain.id
+                    : currentSelection.unit.captain
+                : null;
+            const currentAideId = currentSelection?.unit?.aide
+                ? typeof currentSelection.unit.aide === 'object'
+                    ? currentSelection.unit.aide.id
+                    : currentSelection.unit.aide
+                : null;
+
+            const isAlreadyAssigned =
+                assignedOfficerIds.has(officer.id) &&
+                !(currentCaptainId === officer.id) &&
+                !(currentAideId === officer.id);
 
             if (isAlreadyAssigned) return false;
 
@@ -190,7 +200,7 @@ const BuildCreatorPage = () => {
                     return false;
                 }
 
-                // Air units can only have Air Force officers  
+                // Air units can only have Air Force officers
                 if (!isGroundUnit && !officerArmy.includes('air')) {
                     return false;
                 }
@@ -213,7 +223,7 @@ const BuildCreatorPage = () => {
         setIsOfficerModalOpen(true);
     };
 
-    const handleSelectUnit = (selectedUnit) => {
+    const handleSelectUnit = selectedUnit => {
         if (!currentSelection || currentSelection.role !== 'unit') return;
 
         const { type, index } = currentSelection;
@@ -221,7 +231,7 @@ const BuildCreatorPage = () => {
             ...selectedUnit,
             captain: null,
             aide: null,
-            buildName: `${selectedUnit.units_name || selectedUnit.units} Configuration`
+            buildName: `${selectedUnit.units_name || selectedUnit.units} Configuration`,
         };
 
         setBuild(prev => {
@@ -239,7 +249,7 @@ const BuildCreatorPage = () => {
         setCurrentSelection(null);
     };
 
-    const handleAssignOfficer = (officerId) => {
+    const handleAssignOfficer = (officerId, skillLevels = null) => {
         if (!currentSelection || !currentSelection.unit) return;
 
         const { type, index, role } = currentSelection;
@@ -249,9 +259,14 @@ const BuildCreatorPage = () => {
             const unitArray = type === 'ground' ? newBuild.groundUnits : newBuild.airUnits;
 
             if (unitArray[index]) {
+                const officerData = {
+                    id: Number(officerId),
+                    skillLevels: skillLevels || { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 }, // Default skill levels
+                };
+
                 unitArray[index] = {
                     ...unitArray[index],
-                    [role]: Number(officerId)
+                    [role]: officerData,
                 };
             }
 
@@ -274,6 +289,10 @@ const BuildCreatorPage = () => {
             newBuild.updatedAt = new Date().toISOString();
             return newBuild;
         });
+
+        // Clear hover states when removing a unit
+        setHoveredPassive(null);
+        setHoveredSkill(null);
     };
 
     const handleRemoveOfficer = (type, index, role) => {
@@ -284,19 +303,99 @@ const BuildCreatorPage = () => {
             if (unitArray[index]) {
                 unitArray[index] = {
                     ...unitArray[index],
-                    [role]: null
+                    [role]: null,
                 };
             }
 
             newBuild.updatedAt = new Date().toISOString();
             return newBuild;
         });
+
+        // Clear hover state when removing an officer
+        setHoveredSkill(null);
     };
 
-    const handleViewOfficerDetails = (officerId) => {
+    const handleRemovePassive = (type, index, slotNumber) => {
+        setBuild(prev => {
+            const newBuild = { ...prev };
+            const unitArray = type === 'ground' ? newBuild.groundUnits : newBuild.airUnits;
+
+            if (unitArray[index]) {
+                unitArray[index] = {
+                    ...unitArray[index],
+                    [`passive${slotNumber}`]: null,
+                };
+            }
+
+            newBuild.updatedAt = new Date().toISOString();
+            return newBuild;
+        });
+
+        // Clear hover state when removing a passive skill
+        setHoveredPassive(null);
+        setHoveredSkill(null);
+    };
+
+    const handleOpenPassiveModal = (type, index, slotNumber) => {
+        const unit = type === 'ground' ? build.groundUnits[index] : build.airUnits[index];
+        setCurrentSelection({ type, index, role: 'passive', slotNumber, unit });
+        setIsPassiveModalOpen(true);
+    };
+
+    const handlePassiveSelect = (passive, slotNumber) => {
+        if (!currentSelection) return;
+
+        setBuild(prev => {
+            const newBuild = { ...prev };
+            const { type, index } = currentSelection;
+            const unitArray = type === 'ground' ? newBuild.groundUnits : newBuild.airUnits;
+
+            if (unitArray[index]) {
+                unitArray[index] = {
+                    ...unitArray[index],
+                    [`passive${slotNumber}`]: {
+                        id: passive.id,
+                        name: passive.name,
+                        description: passive.description,
+                        data: passive.data,
+                        img: passive.img,
+                        tag: passive.tag,
+                        officerName: passive.officerName,
+                    },
+                };
+            }
+
+            newBuild.updatedAt = new Date().toISOString();
+            return newBuild;
+        });
+        setIsPassiveModalOpen(false);
+        setCurrentSelection(null);
+    };
+
+    const handlePassiveHover = (passive, event) => {
+        setHoveredPassive(passive);
+        setHoverPosition({ x: event.clientX, y: event.clientY });
+    };
+
+    const handlePassiveLeave = () => {
+        setHoveredPassive(null);
+    };
+
+    const handleViewOfficerDetails = (officerId, unitType, unitIndex, role) => {
         const officer = officersData.find(o => o.id === officerId);
         if (officer) {
-            setSelectedOfficerForDetails(officer);
+            // Get the unit and officer data
+            const unitArray = unitType === 'ground' ? build.groundUnits : build.airUnits;
+            const unit = unitArray[unitIndex];
+            const officerData = unit?.[role];
+
+            setSelectedOfficerForDetails({
+                officer,
+                unitType,
+                unitIndex,
+                role,
+                skillLevels: getOfficerSkillLevels(officerData) || { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 },
+            });
             setIsOfficerDetailsOpen(true);
         }
     };
@@ -304,6 +403,41 @@ const BuildCreatorPage = () => {
     const handleCloseOfficerDetails = () => {
         setIsOfficerDetailsOpen(false);
         setSelectedOfficerForDetails(null);
+    };
+
+    const handleUpdateOfficerSkills = skillLevels => {
+        if (!selectedOfficerForDetails) return;
+
+        const { unitType, unitIndex, role } = selectedOfficerForDetails;
+
+        setBuild(prev => {
+            const newBuild = { ...prev };
+            const unitArray = unitType === 'ground' ? newBuild.groundUnits : newBuild.airUnits;
+
+            if (unitArray[unitIndex] && unitArray[unitIndex][role]) {
+                // Update the officer data with new skill levels
+                const currentOfficerData = unitArray[unitIndex][role];
+                const officerId =
+                    typeof currentOfficerData === 'object'
+                        ? currentOfficerData.id
+                        : currentOfficerData;
+
+                unitArray[unitIndex][role] = {
+                    id: officerId,
+                    skillLevels: skillLevels,
+                };
+
+                newBuild.updatedAt = new Date().toISOString();
+            }
+
+            return newBuild;
+        });
+
+        // Update the modal state as well
+        setSelectedOfficerForDetails(prev => ({
+            ...prev,
+            skillLevels: skillLevels,
+        }));
     };
 
     const handleSaveBuild = () => {
@@ -314,7 +448,7 @@ const BuildCreatorPage = () => {
             const buildToSave = {
                 ...build,
                 id: build.id || Date.now(),
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
             };
 
             const existingIndex = builds.findIndex(b => b.id === buildToSave.id);
@@ -338,8 +472,21 @@ const BuildCreatorPage = () => {
         return (
             <div key={`${type}-${index}`} className="unit-slot">
                 <div className="slot-header">
-                    <h4 className="slot-title">
-                        {isGroundUnit ? `Ground ${slotNumber}` : `Air ${slotNumber}`}
+                    <h4
+                        className="slot-title"
+                        title={
+                            unit
+                                ? unit.units_name || unit.units
+                                : isGroundUnit
+                                  ? `Ground ${slotNumber}`
+                                  : `Air ${slotNumber}`
+                        }
+                    >
+                        {unit
+                            ? unit.units_name || unit.units
+                            : isGroundUnit
+                              ? `Ground ${slotNumber}`
+                              : `Air ${slotNumber}`}
                     </h4>
                     {unit && (
                         <button
@@ -353,30 +500,63 @@ const BuildCreatorPage = () => {
 
                 {unit ? (
                     <div className="unit-configuration">
-                        {/* Unit Info Header */}
-                        <div className="unit-header">
-                            <div className="unit-image-thumb">
-                                {unit.img && (
-                                    <img
-                                        src={`https://www.afuns.cc/img/warpath/db/units/${unit.img}`}
-                                        alt={unit.units_name || unit.units}
-                                        className="unit-thumb"
-                                    />
+                        {/* Enhanced Unit Image Container */}
+                        <div className="unit-image-container">
+                            <img
+                                src={`https://www.afuns.cc/img/warpath/db/units/${unit.img}`}
+                                alt={unit.units_name || unit.units}
+                                className="unit-image"
+                                onError={e => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextElementSibling.style.display = 'flex';
+                                }}
+                            />
+                            <div
+                                className="unit-image-fallback"
+                                style={{ display: unit.img ? 'none' : 'flex' }}
+                            >
+                                🏗️
+                            </div>
+                            <div className="grade-badge">
+                                Grade {unit.grades >= 4 ? renderStars(unit.grades) : unit.grades}
+                            </div>
+                        </div>
+
+                        {/* Enhanced Unit Info Section */}
+                        <div className="unit-info-section">
+                            {/* Badges Row */}
+                            <div className="unit-badges-row">
+                                <div className="unit-type-badge">{unit.units || 'Unknown'}</div>
+                                {unit.camps && (
+                                    <div
+                                        className={`unit-camps-badge camp-${(unit.camps || '').toLowerCase().replace(/\s+/g, '-')}`}
+                                    >
+                                        {unit.camps}
+                                    </div>
                                 )}
                             </div>
-                            <div className="unit-info">
-                                <div className="unit-name">{unit.units_name || unit.units}</div>
-                                <div className="unit-grade">
-                                    Grade {unit.grades >= 4 ? renderStars(unit.grades) : unit.grades}
+
+                            {/* Enhanced Stats Grid */}
+                            <div className="unit-stats-grid">
+                                <div className="stat-item firepower">
+                                    <div className="stat-icon">🔥</div>
+                                    <div className="stat-label">Firepower</div>
+                                    <div className="stat-value">
+                                        {unit.firepower?.toLocaleString() || 'N/A'}
+                                    </div>
                                 </div>
-                                <div className="unit-stats">
-                                    <span>🔥 {unit.firepower?.toLocaleString()}</span>
-                                    <span>❤️ {(unit.health || unit.durability)?.toLocaleString()}</span>
+                                <div className="stat-item health">
+                                    <div className="stat-icon">❤️</div>
+                                    <div className="stat-label">Health</div>
+                                    <div className="stat-value">
+                                        {(unit.health || unit.durability)?.toLocaleString() ||
+                                            'N/A'}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Simple Officer Assignment */}
+                        {/* Enhanced Officer Assignment */}
                         <div className="officer-assignments">
                             <div className="officer-row">
                                 <span className="role-label">Captain</span>
@@ -384,13 +564,25 @@ const BuildCreatorPage = () => {
                                     <div className="officer-display">
                                         <span
                                             className="officer-name clickable"
-                                            onClick={() => handleViewOfficerDetails(unit.captain)}
+                                            onClick={() =>
+                                                handleViewOfficerDetails(
+                                                    getOfficerId(unit.captain),
+                                                    type,
+                                                    index,
+                                                    'captain'
+                                                )
+                                            }
                                             title="Click to view officer details"
                                         >
-                                            {officersData.find(o => o.id === unit.captain)?.nickname || 'Unknown'}
+                                            {officersData.find(
+                                                o => o.id === getOfficerId(unit.captain)
+                                            )?.nickname || 'Unknown'}
+                                            {formatSkillLevels(getOfficerSkillLevels(unit.captain))}
                                         </span>
                                         <button
-                                            onClick={() => handleRemoveOfficer(type, index, 'captain')}
+                                            onClick={() =>
+                                                handleRemoveOfficer(type, index, 'captain')
+                                            }
                                             className="remove-officer-btn"
                                             title="Remove Captain"
                                         >
@@ -399,10 +591,12 @@ const BuildCreatorPage = () => {
                                     </div>
                                 ) : (
                                     <button
-                                        onClick={() => handleOpenOfficerModal(type, index, 'captain')}
+                                        onClick={() =>
+                                            handleOpenOfficerModal(type, index, 'captain')
+                                        }
                                         className="assign-officer-btn"
                                     >
-                                        + Assign Captain
+                                        + Assign
                                     </button>
                                 )}
                             </div>
@@ -412,10 +606,20 @@ const BuildCreatorPage = () => {
                                     <div className="officer-display">
                                         <span
                                             className="officer-name clickable"
-                                            onClick={() => handleViewOfficerDetails(unit.aide)}
+                                            onClick={() =>
+                                                handleViewOfficerDetails(
+                                                    getOfficerId(unit.aide),
+                                                    type,
+                                                    index,
+                                                    'aide'
+                                                )
+                                            }
                                             title="Click to view officer details"
                                         >
-                                            {officersData.find(o => o.id === unit.aide)?.nickname || 'Unknown'}
+                                            {officersData.find(
+                                                o => o.id === getOfficerId(unit.aide)
+                                            )?.nickname || 'Unknown'}
+                                            {formatSkillLevels(getOfficerSkillLevels(unit.aide))}
                                         </span>
                                         <button
                                             onClick={() => handleRemoveOfficer(type, index, 'aide')}
@@ -430,9 +634,70 @@ const BuildCreatorPage = () => {
                                         onClick={() => handleOpenOfficerModal(type, index, 'aide')}
                                         className="assign-officer-btn"
                                     >
-                                        + Assign Aide
+                                        + Assign
                                     </button>
                                 )}
+                            </div>
+                        </div>
+
+                        {/* Passive Abilities Section */}
+                        <div className="passive-abilities">
+                            <div className="passive-abilities-header">
+                                <span className="passive-label">Passive Abilities</span>
+                            </div>
+                            <div className="passive-abilities-grid">
+                                {[1, 2, 3, 4].map(slotNumber => (
+                                    <div key={slotNumber} className="passive-slot">
+                                        {unit[`passive${slotNumber}`] ? (
+                                            <div
+                                                className="passive-display"
+                                                onMouseEnter={e =>
+                                                    handlePassiveHover(
+                                                        unit[`passive${slotNumber}`],
+                                                        e
+                                                    )
+                                                }
+                                                onMouseLeave={handlePassiveLeave}
+                                            >
+                                                <img
+                                                    src={`${OFFICER_IMAGE_BASE_URL}${unit[`passive${slotNumber}`].img}`}
+                                                    alt={unit[`passive${slotNumber}`].name}
+                                                    className="passive-image"
+                                                    onError={e => {
+                                                        e.target.style.display = 'none';
+                                                        e.target.nextElementSibling.style.display =
+                                                            'flex';
+                                                    }}
+                                                />
+                                                <div
+                                                    className="passive-image-fallback"
+                                                    style={{ display: 'none' }}
+                                                >
+                                                    🔹
+                                                </div>
+                                                <button
+                                                    onClick={() =>
+                                                        handleRemovePassive(type, index, slotNumber)
+                                                    }
+                                                    className="remove-passive-btn"
+                                                    title={`Remove Passive ${slotNumber}`}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    handleOpenPassiveModal(type, index, slotNumber)
+                                                }
+                                                className="assign-passive-btn"
+                                                title={`Assign Passive ${slotNumber}`}
+                                            >
+                                                +
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -442,9 +707,7 @@ const BuildCreatorPage = () => {
                         className="add-unit-button"
                     >
                         <div className="plus-icon">+</div>
-                        <div className="add-text">
-                            Add {isGroundUnit ? 'Ground' : 'Air'} Unit
-                        </div>
+                        <div className="add-text">Add {isGroundUnit ? 'Ground' : 'Air'} Unit</div>
                     </button>
                 )}
             </div>
@@ -465,21 +728,25 @@ const BuildCreatorPage = () => {
                             <input
                                 type="text"
                                 value={build.name}
-                                onChange={(e) => setBuild(prev => ({
-                                    ...prev,
-                                    name: e.target.value,
-                                    updatedAt: new Date().toISOString()
-                                }))}
+                                onChange={e =>
+                                    setBuild(prev => ({
+                                        ...prev,
+                                        name: e.target.value,
+                                        updatedAt: new Date().toISOString(),
+                                    }))
+                                }
                                 placeholder="Formation name..."
                                 className="build-name-input"
                             />
                             <textarea
                                 value={build.description}
-                                onChange={(e) => setBuild(prev => ({
-                                    ...prev,
-                                    description: e.target.value,
-                                    updatedAt: new Date().toISOString()
-                                }))}
+                                onChange={e =>
+                                    setBuild(prev => ({
+                                        ...prev,
+                                        description: e.target.value,
+                                        updatedAt: new Date().toISOString(),
+                                    }))
+                                }
                                 placeholder="Formation description..."
                                 className="build-description-input"
                                 rows={2}
@@ -488,19 +755,12 @@ const BuildCreatorPage = () => {
                     </div>
 
                     <div className="action-buttons">
-                        <button
-                            onClick={handleSaveBuild}
-                            className="btn save-button"
-                        >
+                        <button onClick={handleSaveBuild} className="btn save-button">
                             💾 Save Formation
                         </button>
                     </div>
 
-                    {error && (
-                        <div className="error-message">
-                            ⚠️ {error}
-                        </div>
-                    )}
+                    {error && <div className="error-message">⚠️ {error}</div>}
                 </div>
 
                 {/* Formation Overview */}
@@ -534,7 +794,9 @@ const BuildCreatorPage = () => {
                 <div className="units-section">
                     <div className="section-header">
                         <h2 className="section-title">Ground Forces</h2>
-                        <p className="section-subtitle">Configure up to 5 ground units for your formation</p>
+                        <p className="section-subtitle">
+                            Configure up to 5 ground units for your formation
+                        </p>
                     </div>
                     <div className="units-grid ground-units">
                         {build.groundUnits.map((unit, index) =>
@@ -547,12 +809,12 @@ const BuildCreatorPage = () => {
                 <div className="units-section">
                     <div className="section-header">
                         <h2 className="section-title">Air Force</h2>
-                        <p className="section-subtitle">Configure up to 3 air units for your formation</p>
+                        <p className="section-subtitle">
+                            Configure up to 3 air units for your formation
+                        </p>
                     </div>
                     <div className="units-grid air-units">
-                        {build.airUnits.map((unit, index) =>
-                            renderUnitSlot(unit, 'air', index)
-                        )}
+                        {build.airUnits.map((unit, index) => renderUnitSlot(unit, 'air', index))}
                     </div>
                 </div>
 
@@ -582,17 +844,163 @@ const BuildCreatorPage = () => {
                 {/* Officer Details Modal */}
                 {isOfficerDetailsOpen && selectedOfficerForDetails && (
                     <div className="modal-overlay" onClick={handleCloseOfficerDetails}>
-                        <div className="officer-details-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="officer-details-modal" onClick={e => e.stopPropagation()}>
                             <div className="modal-header">
                                 <h2>Officer Details</h2>
-                                <button onClick={handleCloseOfficerDetails} className="close-btn">✕</button>
+                                <button onClick={handleCloseOfficerDetails} className="close-btn">
+                                    ✕
+                                </button>
                             </div>
                             <div className="modal-content">
                                 <AssignedOfficerCard
-                                    officer={selectedOfficerForDetails}
+                                    officer={selectedOfficerForDetails.officer}
+                                    skillLevels={selectedOfficerForDetails.skillLevels}
+                                    onSkillLevelsChange={handleUpdateOfficerSkills}
                                     onRemove={null}
                                 />
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Passive Selection Modal */}
+                <PassiveSelectionModal
+                    isOpen={isPassiveModalOpen}
+                    onClose={() => {
+                        setIsPassiveModalOpen(false);
+                        setCurrentSelection(null);
+                    }}
+                    onPassiveSelect={handlePassiveSelect}
+                    slotNumber={currentSelection?.slotNumber}
+                    currentUnit={currentSelection?.unit}
+                />
+
+                {/* Officer Skill Hover Modal */}
+                {hoveredPassive && (
+                    <div
+                        className="skill-hover-modal"
+                        style={{
+                            position: 'fixed',
+                            left: `${hoverPosition.x}px`,
+                            top: `${hoverPosition.y - 42.5}px`,
+                            transform: 'translateX(-50%) translateY(-100%)',
+                            zIndex: 999999,
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <div className="skill-hover-content">
+                            <div className="skill-hover-header">
+                                <div className="skill-hover-icon">
+                                    {hoveredPassive.img ? (
+                                        <img
+                                            src={`https://www.afuns.cc/img/warpath/db/officers/${hoveredPassive.img}`}
+                                            alt={hoveredPassive.name}
+                                            className="skill-hover-image"
+                                            onError={e => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextElementSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                    ) : null}
+                                    <div
+                                        className="skill-hover-fallback"
+                                        style={{ display: hoveredPassive.img ? 'none' : 'flex' }}
+                                    >
+                                        🔹
+                                    </div>
+                                </div>
+                                <div className="skill-hover-title">
+                                    <h4 className="skill-hover-name">{hoveredPassive.name}</h4>
+                                    {hoveredPassive.tag && (
+                                        <div className="skill-hover-tag">{hoveredPassive.tag}</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {hoveredPassive.desc && (
+                                <div className="skill-hover-description">{hoveredPassive.desc}</div>
+                            )}
+
+                            {hoveredPassive.data && hoveredPassive.data.length > 0 && (
+                                <div className="skill-hover-details">
+                                    <div className="skill-hover-details-title">Details:</div>
+                                    <div
+                                        className="skill-hover-details-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                hoveredPassive.data[0]?.replace(
+                                                    /<br\s*\/?>/gi,
+                                                    '<br>'
+                                                ) || '',
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Officer Skill Hover Modal */}
+                {hoveredSkill && (
+                    <div
+                        className="skill-hover-modal"
+                        style={{
+                            position: 'fixed',
+                            left: `${hoverPosition.x}px`,
+                            top: `${hoverPosition.y - 42.5}px`,
+                            transform: 'translateX(-50%) translateY(-100%)',
+                            zIndex: 999999,
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <div className="skill-hover-content">
+                            <div className="skill-hover-header">
+                                <div className="skill-hover-icon">
+                                    {hoveredSkill.img ? (
+                                        <img
+                                            src={`https://www.afuns.cc/img/warpath/db/officers/${hoveredSkill.img}`}
+                                            alt={hoveredSkill.name}
+                                            className="skill-hover-image"
+                                            onError={e => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextElementSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                    ) : null}
+                                    <div
+                                        className="skill-hover-fallback"
+                                        style={{ display: hoveredSkill.img ? 'none' : 'flex' }}
+                                    >
+                                        🔹
+                                    </div>
+                                </div>
+                                <div className="skill-hover-title">
+                                    <h4 className="skill-hover-name">{hoveredSkill.name}</h4>
+                                    {hoveredSkill.tag && (
+                                        <div className="skill-hover-tag">{hoveredSkill.tag}</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {hoveredSkill.desc && (
+                                <div className="skill-hover-description">{hoveredSkill.desc}</div>
+                            )}
+
+                            {hoveredSkill.data && hoveredSkill.data.length > 0 && (
+                                <div className="skill-hover-details">
+                                    <div className="skill-hover-details-title">Details:</div>
+                                    <div
+                                        className="skill-hover-details-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                hoveredSkill.data[0]?.replace(
+                                                    /<br\s*\/?>/gi,
+                                                    '<br>'
+                                                ) || '',
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

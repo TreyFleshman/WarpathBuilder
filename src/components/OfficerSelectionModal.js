@@ -1,7 +1,12 @@
-
 import React from 'react';
 
-const OfficerSelectionModal = ({ isOpen, onClose, onOfficerSelect, availableOfficers, slotType }) => {
+const OfficerSelectionModal = ({
+    isOpen,
+    onClose,
+    onOfficerSelect,
+    availableOfficers,
+    slotType,
+}) => {
     if (!isOpen) return null;
 
     return (
@@ -10,15 +15,12 @@ const OfficerSelectionModal = ({ isOpen, onClose, onOfficerSelect, availableOffi
                 <div className="modal-content">
                     <div className="modal-header">
                         <h2>Select {slotType}</h2>
-                        <button
-                            onClick={onClose}
-                            className="close-button"
-                        >
+                        <button onClick={onClose} className="close-button">
                             ×
                         </button>
                     </div>
                     <div className="officers-grid">
-                        {availableOfficers.map((officer) => (
+                        {availableOfficers.map(officer => (
                             <div
                                 key={officer.id}
                                 onClick={() => onOfficerSelect(officer.id)}

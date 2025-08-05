@@ -2,7 +2,7 @@
 
 const STORAGE_KEYS = {
     OFFICER_ASSIGNMENTS: 'unitOfficerAssignments',
-    UNIT_BUILDS: 'unitBuilds'
+    UNIT_BUILDS: 'unitBuilds',
 };
 
 /**
@@ -20,7 +20,7 @@ const safeJSONParse = (data, fallback = null) => {
 /**
  * Safely stringify JSON
  */
-const safeJSONStringify = (data) => {
+const safeJSONStringify = data => {
     try {
         return JSON.stringify(data);
     } catch (error) {
@@ -32,7 +32,7 @@ const safeJSONStringify = (data) => {
 /**
  * Save officer assignments for a unit
  */
-export const saveOfficerAssignments = (updatedUnit) => {
+export const saveOfficerAssignments = updatedUnit => {
     try {
         const savedData = localStorage.getItem(STORAGE_KEYS.OFFICER_ASSIGNMENTS) || '{}';
         const assignments = safeJSONParse(savedData, {});
@@ -54,7 +54,8 @@ export const saveBuild = (unit, selectedBaseUnit) => {
         const builds = safeJSONParse(savedData, []);
 
         const buildId = unit.id || Date.now();
-        const buildName = unit.buildName || `${selectedBaseUnit.units_name || selectedBaseUnit.units} Build`;
+        const buildName =
+            unit.buildName || `${selectedBaseUnit.units_name || selectedBaseUnit.units} Build`;
 
         // Merge unit configuration with base unit stats
         const updatedBuild = {
@@ -63,7 +64,7 @@ export const saveBuild = (unit, selectedBaseUnit) => {
             id: buildId,
             buildName,
             baseUnitId: selectedBaseUnit.id,
-            lastModified: Date.now()
+            lastModified: Date.now(),
         };
 
         const existingBuildIndex = builds.findIndex(b => b.id === buildId);

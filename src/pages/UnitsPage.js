@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import unitsData from '../database/units.json';
 import UnitCard from '../components/UnitCard';
-import GradeBadge from '../components/GradeBadge';
+import { renderStars } from '../utils/gradeUtils';
 import '../styles/EnhancedUnitCard.scss';
 import '../styles/UnitsGrid.scss';
 
@@ -20,7 +20,7 @@ const UnitsPage = () => {
             name: 'All Types',
             icon: '🏆',
             matches: [],
-            services: ['all'] // Always visible
+            services: ['all'], // Always visible
         },
         {
             id: 'infantry',
@@ -28,7 +28,7 @@ const UnitsPage = () => {
             icon: '🪖',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type01.jpg',
             matches: ['INFANTRY'],
-            services: ['GROUND FORCES'] // Only visible for ground forces
+            services: ['GROUND FORCES'], // Only visible for ground forces
         },
         {
             id: 'light_tanks',
@@ -36,7 +36,7 @@ const UnitsPage = () => {
             icon: '🚙',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type07.jpg',
             matches: ['LIGHT TANK'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'medium_tanks',
@@ -44,7 +44,7 @@ const UnitsPage = () => {
             icon: '🛡️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type02.jpg',
             matches: ['MEDIUM TANKS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'heavy_tanks',
@@ -52,7 +52,7 @@ const UnitsPage = () => {
             icon: '🏗️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type03.jpg',
             matches: ['HEAVY TANK'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'tank_destroyers',
@@ -60,7 +60,7 @@ const UnitsPage = () => {
             icon: '🎯',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type04.jpg',
             matches: ['TANK DESTROYERS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'super_heavy_tanks',
@@ -68,7 +68,7 @@ const UnitsPage = () => {
             icon: '⚔️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type09.jpg',
             matches: ['SUPER\nHEAVY TANK', 'SUPER HEAVY TANK'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'main_battle_tanks',
@@ -76,7 +76,7 @@ const UnitsPage = () => {
             icon: '🛡️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type14.jpg',
             matches: ['MAIN BATTLE TANKS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'anti_tank_guns',
@@ -84,7 +84,7 @@ const UnitsPage = () => {
             icon: '🎯',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type08.jpg',
             matches: ['ANTI-TANK GUNS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'artillery',
@@ -92,7 +92,7 @@ const UnitsPage = () => {
             icon: '💥',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type05.jpg',
             matches: ['ARTILLERY', 'HOWITZERS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'rockets',
@@ -100,7 +100,7 @@ const UnitsPage = () => {
             icon: '🚀',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type06.jpg',
             matches: ['ROCKET \nLAUNCHERS', 'ROCKET LAUNCHERS'],
-            services: ['GROUND FORCES']
+            services: ['GROUND FORCES'],
         },
         {
             id: 'fighter_planes',
@@ -108,7 +108,7 @@ const UnitsPage = () => {
             icon: '✈️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type10.jpg',
             matches: ['FIGHTER\nPLANES', 'FIGHTER PLANES'],
-            services: ['AIRFORCE'] // Only visible for airforce
+            services: ['AIRFORCE'], // Only visible for airforce
         },
         {
             id: 'bombers',
@@ -116,7 +116,7 @@ const UnitsPage = () => {
             icon: '🛩️',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type11.jpg',
             matches: ['BOMBERS'],
-            services: ['AIRFORCE'] // Only visible for airforce
+            services: ['AIRFORCE'], // Only visible for airforce
         },
         {
             id: 'helicopters',
@@ -124,8 +124,8 @@ const UnitsPage = () => {
             icon: '🚁',
             imageUrl: 'http://www.afuns.cc/img/warpath/db/en/items/unit_type15.jpg',
             matches: ['HELICOPTERS', 'HELICOPTER'],
-            services: ['GROUND FORCES'] // Visible for both services
-        }
+            services: ['GROUND FORCES'], // Visible for both services
+        },
     ];
 
     // Filter unit types based on selected service
@@ -133,15 +133,17 @@ const UnitsPage = () => {
         if (selectedService === 'all') {
             return unitTypeFilters;
         }
-        return unitTypeFilters.filter(filter =>
-            filter.services.includes('all') || filter.services.includes(selectedService)
+        return unitTypeFilters.filter(
+            filter => filter.services.includes('all') || filter.services.includes(selectedService)
         );
     }, [selectedService]);
 
     // Reset unit type selection if current selection is not visible
     React.useEffect(() => {
         if (selectedUnitType !== 'all') {
-            const isCurrentSelectionVisible = visibleUnitTypeFilters.some(filter => filter.id === selectedUnitType);
+            const isCurrentSelectionVisible = visibleUnitTypeFilters.some(
+                filter => filter.id === selectedUnitType
+            );
             if (!isCurrentSelectionVisible) {
                 setSelectedUnitType('all');
             }
@@ -149,7 +151,10 @@ const UnitsPage = () => {
     }, [selectedService, selectedUnitType, visibleUnitTypeFilters]);
 
     // Debug: Log the filter order
-    console.log('Unit Type Filters Order:', unitTypeFilters.map(f => f.name));
+    console.log(
+        'Unit Type Filters Order:',
+        unitTypeFilters.map(f => f.name)
+    );
 
     // Process and organize units data
     const { processedUnits, camps, services, grades } = useMemo(() => {
@@ -161,53 +166,71 @@ const UnitsPage = () => {
                 .trim()
                 .toUpperCase(),
             normalizedService: (unit.services || 'Unknown').toUpperCase(),
-            normalizedCamps: (unit.camps || '').toUpperCase()
+            normalizedCamps: (unit.camps || '').toUpperCase(),
         }));
 
-        const uniqueCamps = [...new Set(processed.map(unit => unit.normalizedCamps).filter(camp => camp && camp !== ''))]
-            .sort();
+        const uniqueCamps = [
+            ...new Set(
+                processed.map(unit => unit.normalizedCamps).filter(camp => camp && camp !== '')
+            ),
+        ].sort();
         const uniqueServices = [...new Set(processed.map(unit => unit.normalizedService))]
             .filter(service => service && service !== 'UNKNOWN')
             .sort();
-        const uniqueGrades = [...new Set(processed.map(unit => unit.grades).filter(grade => grade != null))]
-            .sort((a, b) => a - b);
+        const uniqueGrades = [
+            ...new Set(processed.map(unit => unit.grades).filter(grade => grade != null)),
+        ].sort((a, b) => a - b);
 
         return {
             processedUnits: processed,
             camps: uniqueCamps,
             services: uniqueServices,
-            grades: uniqueGrades
+            grades: uniqueGrades,
         };
     }, []);
 
     // Filter units
     const filteredUnits = useMemo(() => {
         let filtered = processedUnits.filter(unit => {
-            const matchesSearch = unit.units_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            const matchesSearch =
+                unit.units_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 unit.units?.toLowerCase().includes(searchTerm.toLowerCase());
 
             const matchesCamp = selectedCamp === 'all' || unit.normalizedCamps === selectedCamp;
-            const matchesService = selectedService === 'all' || unit.normalizedService === selectedService;
-            const matchesGrade = selectedGrade === 'all' || unit.grades === parseFloat(selectedGrade);
+            const matchesService =
+                selectedService === 'all' || unit.normalizedService === selectedService;
+            const matchesGrade =
+                selectedGrade === 'all' || unit.grades === parseFloat(selectedGrade);
 
             // Visual unit type filter logic
             let matchesUnitType = true;
             if (selectedUnitType !== 'all') {
-                const selectedFilter = unitTypeFilters.find(filter => filter.id === selectedUnitType);
+                const selectedFilter = unitTypeFilters.find(
+                    filter => filter.id === selectedUnitType
+                );
                 if (selectedFilter && selectedFilter.matches.length > 0) {
-                    matchesUnitType = selectedFilter.matches.some(match =>
-                        unit.normalizedType === match.toUpperCase()
+                    matchesUnitType = selectedFilter.matches.some(
+                        match => unit.normalizedType === match.toUpperCase()
                     );
                 }
             }
 
-            return matchesSearch && matchesCamp && matchesService && matchesGrade && matchesUnitType;
+            return (
+                matchesSearch && matchesCamp && matchesService && matchesGrade && matchesUnitType
+            );
         });
 
         return filtered;
-    }, [processedUnits, searchTerm, selectedCamp, selectedService, selectedGrade, selectedUnitType]);
+    }, [
+        processedUnits,
+        searchTerm,
+        selectedCamp,
+        selectedService,
+        selectedGrade,
+        selectedUnitType,
+    ]);
 
-    const handleUnitClick = (unit) => {
+    const handleUnitClick = unit => {
         setSelectedUnit(unit);
     };
 
@@ -237,7 +260,7 @@ const UnitsPage = () => {
                                 type="text"
                                 placeholder="Search units..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={e => setSearchTerm(e.target.value)}
                                 className="search-input"
                             />
                         </div>
@@ -258,15 +281,21 @@ const UnitsPage = () => {
                                                     src={filter.imageUrl}
                                                     alt={filter.name}
                                                     className="unit-type-image"
-                                                    onError={(e) => {
+                                                    onError={e => {
                                                         e.target.style.display = 'none';
-                                                        e.target.nextSibling.style.display = 'block';
+                                                        e.target.nextSibling.style.display =
+                                                            'block';
                                                     }}
                                                 />
                                             ) : (
-                                                <span className="unit-type-emoji">{filter.icon}</span>
+                                                <span className="unit-type-emoji">
+                                                    {filter.icon}
+                                                </span>
                                             )}
-                                            <span className="unit-type-fallback" style={{ display: 'none' }}>
+                                            <span
+                                                className="unit-type-fallback"
+                                                style={{ display: 'none' }}
+                                            >
                                                 {filter.icon}
                                             </span>
                                         </div>
@@ -329,7 +358,7 @@ const UnitsPage = () => {
                                 <h4 className="filter-tabs-title">Grade:</h4>
                                 <select
                                     value={selectedGrade}
-                                    onChange={(e) => setSelectedGrade(e.target.value)}
+                                    onChange={e => setSelectedGrade(e.target.value)}
                                     className="grade-select"
                                 >
                                     <option value="all">All Grades</option>
@@ -345,9 +374,7 @@ const UnitsPage = () => {
 
                     {/* Results Count */}
                     <div className="results-info">
-                        <span className="results-count">
-                            {filteredUnits.length} units found
-                        </span>
+                        <span className="results-count">{filteredUnits.length} units found</span>
                     </div>
                 </div>
 
@@ -365,10 +392,12 @@ const UnitsPage = () => {
                 {/* Unit Detail Modal */}
                 {selectedUnit && (
                     <div className="modal-overlay" onClick={closeUnitModal}>
-                        <div className="unit-detail-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="unit-detail-modal" onClick={e => e.stopPropagation()}>
                             <div className="modal-header">
                                 <h2>{selectedUnit.units_name || selectedUnit.units}</h2>
-                                <button onClick={closeUnitModal} className="close-btn">✕</button>
+                                <button onClick={closeUnitModal} className="close-btn">
+                                    ✕
+                                </button>
                             </div>
                             <div className="modal-content">
                                 <div className="unit-detail-grid">
@@ -381,43 +410,64 @@ const UnitsPage = () => {
                                             />
                                         )}
                                         <div className="unit-grade-large">
-                                            <GradeBadge grade={selectedUnit.grades} size="large" />
+                                            <div className="grade-badge large">
+                                                Grade{' '}
+                                                {selectedUnit.grades >= 4
+                                                    ? renderStars(selectedUnit.grades)
+                                                    : selectedUnit.grades}
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div className="unit-details-section">
                                         <div className="detail-row">
                                             <span className="detail-label">Type:</span>
-                                            <span className="detail-value">{selectedUnit.normalizedType}</span>
+                                            <span className="detail-value">
+                                                {selectedUnit.normalizedType}
+                                            </span>
                                         </div>
                                         <div className="detail-row">
                                             <span className="detail-label">Service:</span>
-                                            <span className="detail-value">{selectedUnit.normalizedService}</span>
+                                            <span className="detail-value">
+                                                {selectedUnit.normalizedService}
+                                            </span>
                                         </div>
                                         {selectedUnit.normalizedCamps && (
                                             <div className="detail-row">
                                                 <span className="detail-label">Camps:</span>
-                                                <span className="detail-value">{selectedUnit.normalizedCamps}</span>
+                                                <span className="detail-value">
+                                                    {selectedUnit.normalizedCamps}
+                                                </span>
                                             </div>
                                         )}
                                         <div className="detail-row">
                                             <span className="detail-label">Firepower:</span>
-                                            <span className="detail-value">{selectedUnit.firepower?.toLocaleString() || 'N/A'}</span>
+                                            <span className="detail-value">
+                                                {selectedUnit.firepower?.toLocaleString() || 'N/A'}
+                                            </span>
                                         </div>
                                         <div className="detail-row">
                                             <span className="detail-label">Health:</span>
-                                            <span className="detail-value">{(selectedUnit.health || selectedUnit.durability)?.toLocaleString() || 'N/A'}</span>
+                                            <span className="detail-value">
+                                                {(
+                                                    selectedUnit.health || selectedUnit.durability
+                                                )?.toLocaleString() || 'N/A'}
+                                            </span>
                                         </div>
                                         {selectedUnit.speed && (
                                             <div className="detail-row">
                                                 <span className="detail-label">Speed:</span>
-                                                <span className="detail-value">{selectedUnit.speed}</span>
+                                                <span className="detail-value">
+                                                    {selectedUnit.speed}
+                                                </span>
                                             </div>
                                         )}
                                         {selectedUnit.range && (
                                             <div className="detail-row">
                                                 <span className="detail-label">Range:</span>
-                                                <span className="detail-value">{selectedUnit.range}</span>
+                                                <span className="detail-value">
+                                                    {selectedUnit.range}
+                                                </span>
                                             </div>
                                         )}
                                     </div>

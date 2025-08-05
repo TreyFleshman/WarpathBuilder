@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Package files
+package-lock.json
+yarn.lock
+
+# Database files (JSON data)
+src/database/
+
+# Test files
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log

@@ -14,9 +14,10 @@ const FiltersSection = ({
     setShowSkillSuggestions,
     forceTypes,
     skillTags,
-    filteredSkillsCount
+    filteredSkillsCount,
+    totalSkillsCount,
 }) => {
-    const handleSuggestionClick = (keyword) => {
+    const handleSuggestionClick = keyword => {
         const currentTerms = skillFilterTerm ? skillFilterTerm.split(',').map(t => t.trim()) : [];
         if (!currentTerms.includes(keyword)) {
             const newTerms = [...currentTerms, keyword];
@@ -32,7 +33,7 @@ const FiltersSection = ({
                     type="text"
                     placeholder="Search skills or officers..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="search-input"
                 />
             </div>
@@ -42,12 +43,14 @@ const FiltersSection = ({
                     <label>Force Type:</label>
                     <select
                         value={selectedForceType}
-                        onChange={(e) => setSelectedForceType(e.target.value)}
+                        onChange={e => setSelectedForceType(e.target.value)}
                         className="filter-select"
                     >
                         <option value="all">All Forces</option>
                         {forceTypes.map(forceType => (
-                            <option key={forceType} value={forceType}>{forceType}</option>
+                            <option key={forceType} value={forceType}>
+                                {forceType}
+                            </option>
                         ))}
                     </select>
                 </div>
@@ -56,12 +59,14 @@ const FiltersSection = ({
                     <label>Skill Category:</label>
                     <select
                         value={selectedSkillTag}
-                        onChange={(e) => setSelectedSkillTag(e.target.value)}
+                        onChange={e => setSelectedSkillTag(e.target.value)}
                         className="filter-select"
                     >
                         <option value="all">All Categories</option>
                         {skillTags.map(tag => (
-                            <option key={tag} value={tag}>{tag}</option>
+                            <option key={tag} value={tag}>
+                                {tag}
+                            </option>
                         ))}
                     </select>
                 </div>
@@ -73,17 +78,19 @@ const FiltersSection = ({
                             type="text"
                             placeholder="Filter by skill buffs (e.g., firepower, dmg resist, critical strike, tank, artillery)..."
                             value={skillFilterTerm}
-                            onChange={(e) => setSkillFilterTerm(e.target.value)}
+                            onChange={e => setSkillFilterTerm(e.target.value)}
                             onFocus={() => setShowSkillSuggestions(true)}
                             onBlur={() => setTimeout(() => setShowSkillSuggestions(false), 200)}
                         />
                         {showSkillSuggestions && (
-                            <div className={`suggestions-dropdown ${showSkillSuggestions ? 'visible' : ''}`}>
+                            <div
+                                className={`suggestions-dropdown ${showSkillSuggestions ? 'visible' : ''}`}
+                            >
                                 {SKILL_KEYWORDS.map(keyword => (
                                     <div
                                         key={keyword}
                                         className="suggestion-item"
-                                        onMouseDown={(e) => {
+                                        onMouseDown={e => {
                                             e.preventDefault();
                                             handleSuggestionClick(keyword);
                                         }}
@@ -97,7 +104,8 @@ const FiltersSection = ({
                         )}
                     </div>
                     <div className="filter-hint">
-                        💡 Tip: Use commas to search for multiple terms (e.g., "firepower, tank, dmg resist")
+                        💡 Tip: Use commas to search for multiple terms (e.g., "firepower, tank, dmg
+                        resist")
                     </div>
                 </div>
             </div>
@@ -105,7 +113,14 @@ const FiltersSection = ({
             {/* Results Count */}
             <div className="results-info">
                 <span className="results-count">
-                    {filteredSkillsCount} passive skills found
+                    {filteredSkillsCount} of {totalSkillsCount || filteredSkillsCount} passive
+                    skills available
+                    {totalSkillsCount && totalSkillsCount > filteredSkillsCount && (
+                        <span className="constraint-note">
+                            {' '}
+                            ({totalSkillsCount - filteredSkillsCount} limited by constraints)
+                        </span>
+                    )}
                 </span>
                 {skillFilterTerm && (
                     <button

@@ -5,7 +5,7 @@
  * @param {Array} dataArray - Array of skill data strings
  * @returns {Object} - Object with upgrade keys and their values
  */
-export const parseUpgradeData = (dataArray) => {
+export const parseUpgradeData = dataArray => {
     const upgradeInfo = {};
 
     dataArray.forEach(item => {
@@ -28,18 +28,21 @@ export const parseUpgradeData = (dataArray) => {
  * @param {string} line - Single line of upgrade data
  * @returns {Object|null} - Parsed data or null if no match
  */
-const parseUpgradeLine = (line) => {
+const parseUpgradeLine = line => {
     if (!line || line.includes('UPGRADE PREVIEW')) return null;
 
     // Handle colon format: "Load Speed Buff: 4%/5%/6%/7%/10%"
     if (line.includes(':') && line.includes('/')) {
         const [label, values] = line.split(':');
         if (values?.includes('/')) {
-            const valueArray = values.trim().split('/').map(v => v.trim());
+            const valueArray = values
+                .trim()
+                .split('/')
+                .map(v => v.trim());
             if (valueArray.length >= 5) {
                 return {
                     label: label.trim(),
-                    values: valueArray
+                    values: valueArray,
                 };
             }
         }
@@ -54,7 +57,7 @@ const parseUpgradeLine = (line) => {
             if (valueArray.length >= 5) {
                 return {
                     label: match[1].trim(),
-                    values: valueArray
+                    values: valueArray,
                 };
             }
         }
@@ -70,7 +73,7 @@ const parseUpgradeLine = (line) => {
                 if (valueArray.length >= 5) {
                     return {
                         label,
-                        values: valueArray
+                        values: valueArray,
                     };
                 }
             }
@@ -87,119 +90,120 @@ const REPLACEMENT_PATTERNS = {
     'Dmg Coefficient': [
         {
             pattern: /\(Dmg Coefficient\s*\d+(?:\.\d+)?\)/gi,
-            replacement: (value) => `(Dmg Coefficient ${value})`
+            replacement: value => `(Dmg Coefficient ${value})`,
         },
         {
             pattern: /Dmg Coefficient\s*\d+(?:\.\d+)?/gi,
-            replacement: (value) => `Dmg Coefficient ${value}`
-        }
+            replacement: value => `Dmg Coefficient ${value}`,
+        },
     ],
     'Healing Coefficient': [
         {
             pattern: /\(Healing Coefficient\s*\d+(?:\.\d+)?\)/gi,
-            replacement: (value) => `(Healing Coefficient ${value})`
+            replacement: value => `(Healing Coefficient ${value})`,
         },
         {
             pattern: /Healing Coefficient\s*\d+(?:\.\d+)?/gi,
-            replacement: (value) => `Healing Coefficient ${value}`
-        }
+            replacement: value => `Healing Coefficient ${value}`,
+        },
     ],
     'Dmg Resist': [
         {
             pattern: /(Dmg Resist by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Blast Dmg Resist by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Tank Dmg Resist\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Dmg Resist\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Additional Tank Dmg Resist\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
-        }
+            replacement: (value, match) => `${match[1]}${value}`,
+        },
     ],
     'Load Speed': [
         {
             pattern: /(Load Speed\s+by\s+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Load Speed\s+Buff:\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Load Speed)(\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}+${value}`
-        }
+            replacement: (value, match) => `${match[1]}+${value}`,
+        },
     ],
     'Attack Dmg': [
         {
             pattern: /(Attack Dmg of his Troop by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Attack Dmg by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Attack Dmg\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
-        }
+            replacement: (value, match) => `${match[1]}${value}`,
+        },
     ],
-    'Firepower': [
+    Firepower: [
         {
-            pattern: /(Firepower of all friendly Ground Forces within \d+ Map Grids by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            pattern:
+                /(Firepower of all friendly Ground Forces within \d+ Map Grids by\s*)(\d+(?:\.\d+)?%?)/gi,
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Firepower by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Troop Firepower\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Firepower\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Artillery Firepower\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Infantry Firepower\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
-        }
+            replacement: (value, match) => `${match[1]}${value}`,
+        },
     ],
-    'Durability': [
+    Durability: [
         {
             pattern: /(Tank Durability by\s*)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Durability\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
-        }
+            replacement: (value, match) => `${match[1]}${value}`,
+        },
     ],
     'Kill Radius': [
         {
             pattern: /(Artillery Kill Radius\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
+            replacement: (value, match) => `${match[1]}${value}`,
         },
         {
             pattern: /(Kill Radius\s*\+)(\d+(?:\.\d+)?%?)/gi,
-            replacement: (value, match) => `${match[1]}${value}`
-        }
-    ]
+            replacement: (value, match) => `${match[1]}${value}`,
+        },
+    ],
 };
 
 /**
@@ -212,44 +216,34 @@ const REPLACEMENT_PATTERNS = {
 export const applyUpgradeValues = (data, upgradeInfo, level) => {
     let currentData = data;
 
-    console.log(`🛠️ applyUpgradeValues called with level ${level}`);
-    console.log(`   Data: "${data}"`);
-    console.log(`   UpgradeInfo:`, upgradeInfo);
-
     Object.entries(upgradeInfo).forEach(([key, values]) => {
         const currentValue = values[level - 1];
         if (!currentValue) return;
 
-        console.log(`   Processing ${key}: ${currentValue} (from array [${values.join(', ')}])`);
-
         // Strategy 1: Use predefined replacement patterns for known skill types
-        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(([patternKey]) =>
-            key.includes(patternKey) || key === patternKey
+        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(
+            ([patternKey]) => key.includes(patternKey) || key === patternKey
         );
 
         if (patternConfig) {
-            console.log(`   Using predefined pattern for ${key}`);
             const [, patterns] = patternConfig;
-            patterns.forEach(({ pattern, replacement }, index) => {
-                const beforeReplace = currentData;
+            patterns.forEach(({ pattern, replacement }) => {
                 currentData = currentData.replace(pattern, (match, ...groups) => {
-                    console.log(`     Pattern ${index}: ${pattern} matched "${match}" with groups:`, groups);
                     return replacement(currentValue, [match, ...groups]);
                 });
-                if (beforeReplace !== currentData) {
-                    console.log(`     ✅ Pattern ${index} applied: "${beforeReplace}" → "${currentData}"`);
-                } else {
-                    console.log(`     ❌ Pattern ${index} no match: ${pattern}`);
-                }
             });
         } else {
-            console.log(`   Using intelligent upgrade for ${key}`);
             // Strategy 2: Intelligent auto-detection for unknown patterns
-            currentData = applyIntelligentUpgrade(currentData, key, currentValue, values[0], values);
+            currentData = applyIntelligentUpgrade(
+                currentData,
+                key,
+                currentValue,
+                values[0],
+                values
+            );
         }
     });
 
-    console.log(`   Final result: "${currentData}"`);
     return currentData;
 };
 
@@ -396,6 +390,6 @@ const isNumberClose = (num1, num2, tolerance = 0.1) => {
 /**
  * Escapes special regex characters
  */
-const escapeRegex = (string) => {
+const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };

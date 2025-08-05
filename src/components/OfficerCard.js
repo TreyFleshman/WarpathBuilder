@@ -1,13 +1,32 @@
-
 import React, { useState } from 'react';
 import SkillCard from './SkillCard';
-import { createDefaultSkillLevels, isRevivalSkillAvailable, SKILL_CONFIG } from '../utils/skillConfig';
+import {
+    createDefaultSkillLevels,
+    isRevivalSkillAvailable,
+    SKILL_CONFIG,
+} from '../utils/constants';
 
-export const AssignedOfficerCard = ({ officer, onRemove }) => {
-    const [skillLevels, setSkillLevels] = useState(createDefaultSkillLevels());
+export const AssignedOfficerCard = ({
+    officer,
+    skillLevels: externalSkillLevels,
+    onSkillLevelsChange,
+    onRemove,
+}) => {
+    const [internalSkillLevels, setInternalSkillLevels] = useState(createDefaultSkillLevels());
+
+    // Use external skill levels if provided, otherwise use internal state
+    const skillLevels = externalSkillLevels || internalSkillLevels;
 
     const updateSkillLevel = (skillIndex, newLevel) => {
-        setSkillLevels(prev => ({ ...prev, [skillIndex]: newLevel }));
+        const updatedLevels = { ...skillLevels, [skillIndex]: newLevel };
+
+        if (onSkillLevelsChange) {
+            // If we have an external handler, use it
+            onSkillLevelsChange(updatedLevels);
+        } else {
+            // Otherwise, update internal state
+            setInternalSkillLevels(updatedLevels);
+        }
     };
 
     if (!officer) return null;
@@ -20,7 +39,11 @@ export const AssignedOfficerCard = ({ officer, onRemove }) => {
                     <img
                         src={`https://www.afuns.cc/img/warpath/db/officers/${officer.avatar_b}`}
                         onError={e => {
-                            if (officer.avatar && e.target.src !== `https://www.afuns.cc/img/warpath/db/officers/${officer.avatar}`) {
+                            if (
+                                officer.avatar &&
+                                e.target.src !==
+                                    `https://www.afuns.cc/img/warpath/db/officers/${officer.avatar}`
+                            ) {
                                 e.target.src = `https://www.afuns.cc/img/warpath/db/officers/${officer.avatar}`;
                             }
                         }}
@@ -30,11 +53,18 @@ export const AssignedOfficerCard = ({ officer, onRemove }) => {
                     <div className="officer-details">
                         <div className="officer-header">
                             <h4 className="officer-name">{officer.nickname}</h4>
-                            <button onClick={onRemove} className="remove-button">Remove</button>
+                            <button onClick={onRemove} className="remove-button">
+                                Remove
+                            </button>
                         </div>
                         <div className="officer-info">
-                            <div><strong>Army:</strong> {officer.army}</div>
-                            <div><strong>Characters:</strong> {officer.character.map(c => c.name).join(', ')}</div>
+                            <div>
+                                <strong>Army:</strong> {officer.army}
+                            </div>
+                            <div>
+                                <strong>Characters:</strong>{' '}
+                                {officer.character.map(c => c.name).join(', ')}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -50,8 +80,12 @@ export const AssignedOfficerCard = ({ officer, onRemove }) => {
                                     skill={skill}
                                     index={index}
                                     skillLevel={skillLevels[index]}
-                                    onLevelChange={(newLevel) => updateSkillLevel(index, newLevel)}
-                                    isRevivalAvailable={index === SKILL_CONFIG.REVIVAL_SKILL_INDEX ? isRevivalSkillAvailable(skillLevels) : true}
+                                    onLevelChange={newLevel => updateSkillLevel(index, newLevel)}
+                                    isRevivalAvailable={
+                                        index === SKILL_CONFIG.REVIVAL_SKILL_INDEX
+                                            ? isRevivalSkillAvailable(skillLevels)
+                                            : true
+                                    }
                                 />
                             ))}
                         </div>
@@ -77,9 +111,7 @@ export const AvailableOfficerCard = ({ officer, onClick }) => {
                 />
             )}
             <div className="officer-name">{officer.nickname}</div>
-            <div className="officer-character">
-                {officer.character.map(c => c.name).join(', ')}
-            </div>
+            <div className="officer-character">{officer.character.map(c => c.name).join(', ')}</div>
         </div>
     );
 };

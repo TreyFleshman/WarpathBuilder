@@ -7,181 +7,193 @@
 // Component styles
 @import './Navigation.scss';
 @import './components.scss';
+@import './SkillHoverModal.scss';
 
 // Page styles
-@import './UnitsListPage.scss';
+@import './HomePage.scss';
 @import './UnitsPage.scss';
 @import './OfficersPage.scss';
 @import './PassiveSkillsPage.scss';
-@import './UnitDetailPage.scss';
 @import './BuildsListPage.scss';
 @import './BuildCreatorPage.scss';
 
 // Military-themed design system
 :root {
-  // Military Color Palette (enhanced for better visibility)
-  --military-primary: #2d4a2b;        // Dark forest green
-  --military-secondary: #4a5d23;      // Olive green
-  --military-accent: #8b4513;         // Military brown/tan
-  --military-gold: #ffd700;           // Brighter command gold
-  --military-silver: #c0c0c0;         // Rank silver
-  --military-crimson: #8b0000;        // Battle red
-  --military-steel: #4682b4;          // Steel blue
-  --military-gunmetal: #2c3539;       // Gunmetal gray
-  
-  // Background colors
-  --bg-primary: #1a1f1a;              // Dark military base
-  --bg-secondary: #2d3a2d;            // Slightly lighter
-  --bg-tertiary: #3d4f3d;             // Content areas
-  --bg-overlay: rgba(26, 31, 26, 0.95); // Modal overlay
-  
-  // Text colors (improved contrast for better visibility)
-  --text-primary: #f5f5f5;            // Brighter light text
-  --text-secondary: #d0d8d0;          // Improved muted text
-  --text-accent: #ffd700;             // Brighter gold highlights
-  --text-danger: #ff7979;             // Improved error text
-  --text-success: #6c5ce7;            // Improved success text
-  
-  // Border colors
-  --border-primary: #4a5d23;          // Main borders
-  --border-secondary: #3d4f3d;        // Subtle borders
-  --border-accent: #8b4513;           // Highlighted borders
-  
-  // Status colors
-  --status-active: #51cf66;           // Active/online
-  --status-inactive: #868e96;         // Inactive
-  --status-warning: #ffd43b;          // Warning
-  --status-critical: #ff6b6b;         // Critical/danger
-  --status-locked: #868e96;           // Locked state
-  
-  // Gradients
-  --gradient-primary: linear-gradient(135deg, var(--military-primary) 0%, var(--military-secondary) 100%);
-  --gradient-accent: linear-gradient(135deg, var(--military-accent) 0%, var(--military-gold) 100%);
-  --gradient-steel: linear-gradient(135deg, var(--military-steel) 0%, var(--military-gunmetal) 100%);
-  --gradient-crimson: linear-gradient(135deg, var(--military-crimson) 0%, #a0001a 100%);
-  
-  // Spacing (military precision)
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 20px;
-  --spacing-xxl: 24px;
-  --spacing-xxxl: 32px;
+    // Military Color Palette (enhanced for better visibility)
+    --military-primary: #2d4a2b; // Dark forest green
+    --military-secondary: #4a5d23; // Olive green
+    --military-accent: #8b4513; // Military brown/tan
+    --military-gold: #ffd700; // Brighter command gold
+    --military-silver: #c0c0c0; // Rank silver
+    --military-crimson: #8b0000; // Battle red
+    --military-steel: #4682b4; // Steel blue
+    --military-gunmetal: #2c3539; // Gunmetal gray
 
-  // Border radius (tactical angles)
-  --radius-sharp: 2px;                // Sharp military edges
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+    // Background colors
+    --bg-primary: #1a1f1a; // Dark military base
+    --bg-secondary: #2d3a2d; // Slightly lighter
+    --bg-tertiary: #3d4f3d; // Content areas
+    --bg-overlay: rgba(26, 31, 26, 0.95); // Modal overlay
 
-  // Shadows (depth and authority)
-  --shadow-tactical: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-command: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-strategic: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    // Text colors (improved contrast for better visibility)
+    --text-primary: #f5f5f5; // Brighter light text
+    --text-secondary: #d0d8d0; // Improved muted text
+    --text-accent: #ffd700; // Brighter gold highlights
+    --text-danger: #ff7979; // Improved error text
+    --text-success: #6c5ce7; // Improved success text
 
-  // Transitions
-  --transition-tactical: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-standard: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  // Typography
-  --font-tactical: 'Roboto Mono', 'Courier New', monospace;
-  --font-command: 'Inter', 'Segoe UI', sans-serif;
-  --font-display: 'Orbitron', 'Arial Black', sans-serif;
+    // Border colors
+    --border-primary: #4a5d23; // Main borders
+    --border-secondary: #3d4f3d; // Subtle borders
+    --border-accent: #8b4513; // Highlighted borders
+
+    // Status colors
+    --status-active: #51cf66; // Active/online
+    --status-inactive: #868e96; // Inactive
+    --status-warning: #ffd43b; // Warning
+    --status-critical: #ff6b6b; // Critical/danger
+    --status-locked: #868e96; // Locked state
+
+    // Gradients
+    --gradient-primary: linear-gradient(
+        135deg,
+        var(--military-primary) 0%,
+        var(--military-secondary) 100%
+    );
+    --gradient-accent: linear-gradient(
+        135deg,
+        var(--military-accent) 0%,
+        var(--military-gold) 100%
+    );
+    --gradient-steel: linear-gradient(
+        135deg,
+        var(--military-steel) 0%,
+        var(--military-gunmetal) 100%
+    );
+    --gradient-crimson: linear-gradient(135deg, var(--military-crimson) 0%, #a0001a 100%);
+
+    // Spacing (military precision)
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 24px;
+    --spacing-xxxl: 32px;
+
+    // Border radius (tactical angles)
+    --radius-sharp: 2px; // Sharp military edges
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+
+    // Shadows (depth and authority)
+    --shadow-tactical: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-command: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-strategic: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    // Transitions
+    --transition-tactical: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-standard: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Typography
+    --font-tactical: 'Roboto Mono', 'Courier New', monospace;
+    --font-command: 'Inter', 'Segoe UI', sans-serif;
+    --font-display: 'Orbitron', 'Arial Black', sans-serif;
 }
 
 // Common utility classes
 .text-center {
-  text-align: center;
+    text-align: center;
 }
 
 .text-left {
-  text-align: left;
+    text-align: left;
 }
 
 .text-right {
-  text-align: right;
+    text-align: right;
 }
 
 .font-bold {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .font-italic {
-  font-style: italic;
+    font-style: italic;
 }
 
 .mb-0 {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .mb-1 {
-  margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
 }
 
 .mb-2 {
-  margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
 }
 
 .mb-3 {
-  margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
 }
 
 .mb-4 {
-  margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
 }
 
 .mt-0 {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .mt-1 {
-  margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
 }
 
 .mt-2 {
-  margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
 }
 
 .mt-3 {
-  margin-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
 }
 
 .mt-4 {
-  margin-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
 }
 
 .p-0 {
-  padding: 0;
+    padding: 0;
 }
 
 .p-1 {
-  padding: var(--spacing-xs);
+    padding: var(--spacing-xs);
 }
 
 .p-2 {
-  padding: var(--spacing-sm);
+    padding: var(--spacing-sm);
 }
 
 .p-3 {
-  padding: var(--spacing-md);
+    padding: var(--spacing-md);
 }
 
 .p-4 {
-  padding: var(--spacing-lg);
+    padding: var(--spacing-lg);
 }
 
 // Responsive utilities
 @media (max-width: 768px) {
-  .hide-mobile {
-    display: none;
-  }
+    .hide-mobile {
+        display: none;
+    }
 }
 
 @media (min-width: 769px) {
-  .hide-desktop {
-    display: none;
-  }
+    .hide-desktop {
+        display: none;
+    }
 }

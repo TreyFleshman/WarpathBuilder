@@ -1,23 +1,7 @@
 // Enhanced Unit Card Component
 import React from 'react';
-import GradeBadge from './GradeBadge';
-
-// Helper function to get camp-specific CSS class
-const getCampClass = (campName) => {
-    if (!campName) return '';
-
-    const normalizedCamp = campName.toLowerCase().trim();
-
-    if (normalizedCamp.includes('vanguard')) {
-        return 'camp-vanguard';
-    } else if (normalizedCamp.includes('liberty')) {
-        return 'camp-liberty';
-    } else if (normalizedCamp.includes('martys')) {
-        return 'camp-martyrs';
-    }
-
-    return ''; // Default styling will be used
-};
+import { renderStars } from '../utils/gradeUtils';
+import { getCampClass, IMAGE_URLS } from '../utils/constants';
 
 const UnitCard = ({ unit, onClick }) => {
     return (
@@ -28,13 +12,21 @@ const UnitCard = ({ unit, onClick }) => {
                     height: '200px',
                     position: 'relative',
                     overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #1a252f, #2c3e50)'
+                    background: 'linear-gradient(135deg, #1a252f, #2c3e50)',
                 }}
             >
-                <div className="image-wrapper" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                    className="image-wrapper"
+                    style={{
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
                     {unit.img && (
                         <img
-                            src={`https://www.afuns.cc/img/warpath/db/units/${unit.img}`}
+                            src={`${IMAGE_URLS.UNITS}${unit.img}`}
                             alt={unit.units_name || unit.units}
                             className="unit-image enhanced"
                             loading="lazy"
@@ -49,19 +41,27 @@ const UnitCard = ({ unit, onClick }) => {
                                 imageRendering: 'optimize-contrast',
                                 msInterpolationMode: 'nearest-neighbor',
                                 transform: 'translateZ(0)',
-                                backfaceVisibility: 'hidden'
+                                backfaceVisibility: 'hidden',
                             }}
                         />
                     )}
                     <div className="image-overlay"></div>
                 </div>
 
-                <div className="grade-badge-container" style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10 }}>
-                    <GradeBadge grade={unit.grades} />
+                <div
+                    className="grade-badge-container"
+                    style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10 }}
+                >
+                    <div className="grade-badge">
+                        Grade {unit.grades >= 4 ? renderStars(unit.grades) : unit.grades}
+                    </div>
                 </div>
 
                 {/* Service indicator */}
-                <div className="service-indicator" style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10 }}>
+                <div
+                    className="service-indicator"
+                    style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10 }}
+                >
                     {unit.normalizedService === 'AIRFORCE' ? '✈️' : '🪖'}
                 </div>
             </div>
@@ -82,12 +82,16 @@ const UnitCard = ({ unit, onClick }) => {
                     <div className="stat-item firepower">
                         <span className="stat-icon">🔥</span>
                         <span className="stat-label">Firepower</span>
-                        <span className="stat-value">{unit.firepower?.toLocaleString() || 'N/A'}</span>
+                        <span className="stat-value">
+                            {unit.firepower?.toLocaleString() || 'N/A'}
+                        </span>
                     </div>
                     <div className="stat-item health">
                         <span className="stat-icon">❤️</span>
                         <span className="stat-label">Health</span>
-                        <span className="stat-value">{(unit.health || unit.durability)?.toLocaleString() || 'N/A'}</span>
+                        <span className="stat-value">
+                            {(unit.health || unit.durability)?.toLocaleString() || 'N/A'}
+                        </span>
                     </div>
                 </div>
             </div>

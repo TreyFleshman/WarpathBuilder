@@ -2,10 +2,10 @@
 export const GRADE_CONFIGS = {
     SILVER: { min: 4, max: 6, color: '#c0c0c0', name: 'Silver' },
     GOLD: { min: 6, max: 8, color: '#ffd700', name: 'Gold' },
-    STEEL: { min: 8, max: 10, color: '#4682b4', name: 'Steel Blue' }
+    STEEL: { min: 8, max: 10, color: '#4682b4', name: 'Steel Blue' },
 };
 
-export const getGradeConfig = (grade) => {
+export const getGradeConfig = grade => {
     const gradeNum = parseFloat(grade);
 
     if (gradeNum >= GRADE_CONFIGS.STEEL.min) return GRADE_CONFIGS.STEEL;
@@ -15,7 +15,7 @@ export const getGradeConfig = (grade) => {
     return null;
 };
 
-export const calculateStars = (grade) => {
+export const calculateStars = grade => {
     const gradeNum = parseFloat(grade);
     const baseGrade = Math.floor(gradeNum);
     const decimal = Math.round((gradeNum % 1) * 10) / 10;
@@ -38,12 +38,13 @@ export const calculateStars = (grade) => {
     return { stars, chevron, color: config.color };
 };
 
-export const renderStars = (grade) => {
+export const renderStars = grade => {
     const { stars, chevron, color } = calculateStars(grade);
 
     return (
         <span style={{ color, fontWeight: 'bold' }}>
-            {stars}{chevron}
+            {stars}
+            {chevron}
         </span>
     );
 };

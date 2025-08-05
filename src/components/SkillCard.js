@@ -1,8 +1,16 @@
 import React, { useMemo } from 'react';
 import { parseUpgradeData, applyUpgradeValues } from '../utils/skillDataParser';
-import { SKILL_CONFIG, SKILL_ICONS, SKILL_MESSAGES } from '../utils/skillConfig';
+import { SKILL_CONFIG, SKILL_ICONS, SKILL_MESSAGES } from '../utils/constants';
 
-const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvailable = true }) => {
+const SkillCard = ({
+    skill,
+    index,
+    skillLevel = 1,
+    onLevelChange,
+    isRevivalAvailable = true,
+    onSkillHover,
+    onSkillLeave,
+}) => {
     // Memoize upgrade data parsing for performance - must be before early return
     const upgradeData = useMemo(() => {
         return skill ? parseUpgradeData(skill.data) : {};
@@ -12,14 +20,6 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
     const getCurrentLevelData = useMemo(() => {
         if (!skill || !skill.data[0]) return '';
         const result = applyUpgradeValues(skill.data[0], upgradeData, skillLevel);
-
-        // Debug logging to see what's happening
-        if (skill.name === "Lions Led By Lions" || skill.name === "Wall of Steel") {
-            console.log(`🔍 ${skill.name} Level ${skillLevel}:`);
-            console.log(`   Base: "${skill.data[0]}"`);
-            console.log(`   Result: "${result}"`);
-            console.log(`   Upgrade Data:`, upgradeData);
-        }
 
         return result;
     }, [skill, upgradeData, skillLevel]);
@@ -32,13 +32,17 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
     // Process skill data based on skill type and state
     const processSkillData = () => {
         if (isRevivalSkill) {
-            const filterKey = isSkillLocked ? SKILL_MESSAGES.REVIVAL_LOCKED : SKILL_MESSAGES.REVIVAL_UNLOCKED;
+            const filterKey = isSkillLocked
+                ? SKILL_MESSAGES.REVIVAL_LOCKED
+                : SKILL_MESSAGES.REVIVAL_UNLOCKED;
             const replacementIcon = isSkillLocked ? SKILL_ICONS.LOCKED : SKILL_ICONS.AWAKENED;
             const replacementText = isSkillLocked ? 'LOCKED:' : 'AWAKENED:';
 
             return skill.data
                 .filter(dataItem => dataItem.includes(filterKey))
-                .map(dataItem => dataItem.replace(filterKey, `${replacementIcon} ${replacementText}`));
+                .map(dataItem =>
+                    dataItem.replace(filterKey, `${replacementIcon} ${replacementText}`)
+                );
         }
 
         return [getCurrentLevelData];
@@ -46,7 +50,7 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
 
     const skillData = processSkillData();
 
-    const handleLevelChange = (delta) => {
+    const handleLevelChange = delta => {
         const newLevel = Math.max(
             SKILL_CONFIG.MIN_LEVEL,
             Math.min(SKILL_CONFIG.MAX_LEVEL, skillLevel + delta)
@@ -63,7 +67,9 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
                             {SKILL_ICONS.LOCKED} {SKILL_MESSAGES.LOCKED}
                         </span>
                     ) : (
-                        <span>Level {SKILL_CONFIG.MAX_LEVEL} ({SKILL_MESSAGES.AWAKENED})</span>
+                        <span>
+                            Level {SKILL_CONFIG.MAX_LEVEL} ({SKILL_MESSAGES.AWAKENED})
+                        </span>
                     )}
                 </div>
             );
@@ -73,7 +79,7 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
             <div className="level-selector">
                 <button
                     className="level-btn"
-                    onClick={(e) => {
+                    onClick={e => {
                         e.stopPropagation();
                         handleLevelChange(-1);
                     }}
@@ -84,7 +90,7 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
                 <span className="level-display">Level {skillLevel}</span>
                 <button
                     className="level-btn"
-                    onClick={(e) => {
+                    onClick={e => {
                         e.stopPropagation();
                         handleLevelChange(1);
                     }}
@@ -97,27 +103,41 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
     };
 
     return (
-        <div className={`skill-card ${isRevivalSkill ? 'revival-skill' : ''} ${isSkillLocked ? 'locked' : ''}`}>
+        <div
+            className={`skill-card ${isRevivalSkill ? 'revival-skill' : ''} ${isSkillLocked ? 'locked' : ''}`}
+        >
             {/* Skill Header */}
             <div className="skill-header">
                 <div className="skill-info">
-                    {skill.img && (
-                        <div className="skill-icon">
+                    <div className="skill-icon">
+                        {skill.img ? (
                             <img
                                 src={`https://www.afuns.cc/img/warpath/db/officers/${skill.img}`}
                                 alt={skill.name}
-                                onError={(e) => { e.target.style.display = 'none'; }}
+                                onError={e => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextElementSibling.style.display = 'inline';
+                                }}
                             />
-                        </div>
-                    )}
+                        ) : null}
+                        <span
+                            className="skill-icon-fallback"
+                            style={{ display: skill.img ? 'none' : 'inline' }}
+                        >
+                            🔹
+                        </span>
+                    </div>
                     <div className="skill-details">
-                        <h4 className="skill-name">
+                        <h4
+                            className="skill-name"
+                            onMouseEnter={onSkillHover ? e => onSkillHover(skill, e) : undefined}
+                            onMouseLeave={onSkillLeave || undefined}
+                            style={{ cursor: onSkillHover ? 'pointer' : 'default' }}
+                        >
                             {skill.name}
                             {isRevivalSkill && <span className="revival-badge">Revival</span>}
                         </h4>
-                        <div className="skill-level-controls">
-                            {renderLevelControls()}
-                        </div>
+                        <div className="skill-level-controls">{renderLevelControls()}</div>
                     </div>
                 </div>
             </div>
@@ -132,10 +152,19 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
                             dangerouslySetInnerHTML={{
                                 __html: dataItem
                                     .replace(/\n/g, '<br/>')
-                                    .replace(/(\d+\.?\d*%)/g, '<span class="stat-highlight">$1</span>')
+                                    .replace(
+                                        /(\d+\.?\d*%)/g,
+                                        '<span class="stat-highlight">$1</span>'
+                                    )
                                     .replace(/(\+\d+)/g, '<span class="bonus-highlight">$1</span>')
-                                    .replace(/(AWAKENED:|UNLOCKED:|LOCKED:)/g, '<strong class="status-highlight">$1</strong>')
-                                    .replace(/(Dmg Coefficient|Load Speed Buff|Prep Time)/g, '<strong>$1</strong>')
+                                    .replace(
+                                        /(AWAKENED:|UNLOCKED:|LOCKED:)/g,
+                                        '<strong class="status-highlight">$1</strong>'
+                                    )
+                                    .replace(
+                                        /(Dmg Coefficient|Load Speed Buff|Prep Time)/g,
+                                        '<strong>$1</strong>'
+                                    ),
                             }}
                         />
                     ))}
@@ -144,7 +173,8 @@ const SkillCard = ({ skill, index, skillLevel = 1, onLevelChange, isRevivalAvail
                 {isRevivalSkill && (
                     <div className="revival-note">
                         <span className="revival-icon">{SKILL_ICONS.REVIVAL}</span>
-                        This is a special Revival Booster skill that enhances unit capabilities when awakened.
+                        This is a special Revival Booster skill that enhances unit capabilities when
+                        awakened.
                     </div>
                 )}
             </div>

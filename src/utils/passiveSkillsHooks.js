@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 
 // Custom hook for processing officer data and extracting passive skills
-export const usePassiveSkills = (officersData) => {
+export const usePassiveSkills = officersData => {
     return useMemo(() => {
         const processed = officersData.map(officer => ({
             ...officer,
             normalizedArmy: (officer.army || 'Unknown').toUpperCase(),
-            forceType: officer.army === 'AirForce' ? 'Air Force' : 'Ground Forces'
+            forceType: officer.army === 'AirForce' ? 'Air Force' : 'Ground Forces',
         }));
 
         const uniqueForceTypes = [...new Set(processed.map(officer => officer.forceType))].sort();
@@ -37,7 +37,7 @@ export const usePassiveSkills = (officersData) => {
                             img: skill.img || '',
                             tag: skill.tag || '',
                             data: skill.data || [],
-                            skillIndex: index
+                            skillIndex: index,
                         });
                     }
                 });
@@ -49,7 +49,7 @@ export const usePassiveSkills = (officersData) => {
         return {
             passiveSkills: allPassiveSkills,
             forceTypes: uniqueForceTypes,
-            skillTags: uniqueSkillTags
+            skillTags: uniqueSkillTags,
         };
     }, [officersData]);
 };
@@ -60,17 +60,22 @@ export const useSkillFilters = (passiveSkills, filters) => {
 
     return useMemo(() => {
         let filtered = passiveSkills.filter(skill => {
-            const matchesSearch = skill.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            const matchesSearch =
+                skill.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 skill.officerName?.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const matchesForceType = selectedForceType === 'all' || skill.officerForceType === selectedForceType;
+            const matchesForceType =
+                selectedForceType === 'all' || skill.officerForceType === selectedForceType;
 
             const matchesSkillTag = selectedSkillTag === 'all' || skill.tag === selectedSkillTag;
 
             // Skill filter logic
             let matchesSkillFilter = true;
             if (skillFilterTerm.trim()) {
-                const skillSearchTerms = skillFilterTerm.toLowerCase().split(',').map(term => term.trim());
+                const skillSearchTerms = skillFilterTerm
+                    .toLowerCase()
+                    .split(',')
+                    .map(term => term.trim());
                 matchesSkillFilter = skillSearchTerms.some(term => {
                     if (!term) return false;
 
@@ -78,8 +83,10 @@ export const useSkillFilters = (passiveSkills, filters) => {
                         skill.name || '',
                         skill.description || '',
                         skill.tag || '',
-                        ...(skill.data || [])
-                    ].join(' ').toLowerCase();
+                        ...(skill.data || []),
+                    ]
+                        .join(' ')
+                        .toLowerCase();
 
                     return searchableText.includes(term);
                 });

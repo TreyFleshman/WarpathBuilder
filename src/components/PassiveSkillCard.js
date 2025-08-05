@@ -1,10 +1,10 @@
 import React from 'react';
 import { OFFICER_IMAGE_BASE_URL } from '../utils/constants';
 
-const PassiveSkillCard = ({ skill, onSkillHover, onSkillLeave, skillMatchesFilter }) => {
+const PassiveSkillCard = ({ skill, skillMatchesFilter, isDisabled = false }) => {
     return (
         <div
-            className={`passive-skill-card ${skillMatchesFilter(skill) ? 'skill-matched' : ''}`}
+            className={`passive-skill-card ${skillMatchesFilter(skill) ? 'skill-matched' : ''} ${isDisabled ? 'disabled' : ''}`}
         >
             <div className="skill-header">
                 <div className="skill-icon-container">
@@ -13,26 +13,25 @@ const PassiveSkillCard = ({ skill, onSkillHover, onSkillLeave, skillMatchesFilte
                             src={`${OFFICER_IMAGE_BASE_URL}${skill.img}`}
                             alt={skill.name}
                             className="skill-image"
-                            onError={(e) => {
+                            onError={e => {
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'inline';
                             }}
                         />
                     ) : null}
-                    <span className="skill-icon-fallback" style={{ display: skill.img ? 'none' : 'inline' }}>
+                    <span
+                        className="skill-icon-fallback"
+                        style={{ display: skill.img ? 'none' : 'inline' }}
+                    >
                         🛡️
                     </span>
                 </div>
                 <div className="skill-info">
-                    <h3
-                        className="skill-name"
-                        onMouseEnter={(e) => onSkillHover(skill, e)}
-                        onMouseLeave={onSkillLeave}
-                    >
-                        {skill.name}
-                    </h3>
+                    <h3 className="skill-name">{skill.name}</h3>
                     {skill.tag && (
-                        <div className="skill-tag" data-tag={skill.tag}>{skill.tag}</div>
+                        <div className="skill-tag" data-tag={skill.tag}>
+                            {skill.tag}
+                        </div>
                     )}
                     {skillMatchesFilter(skill) && (
                         <span className="skill-match-indicator">✓ Matched</span>
@@ -41,14 +40,12 @@ const PassiveSkillCard = ({ skill, onSkillHover, onSkillLeave, skillMatchesFilte
             </div>
 
             <div className="skill-description">
-                {skill.description && (
-                    <p>{skill.description}</p>
-                )}
+                {skill.description && <p>{skill.description}</p>}
                 {skill.data && skill.data.length > 0 && (
                     <div
                         className="skill-details"
                         dangerouslySetInnerHTML={{
-                            __html: skill.data[0]?.replace(/<br\s*\/?>/gi, '<br>') || ''
+                            __html: skill.data[0]?.replace(/<br\s*\/?>/gi, '<br>') || '',
                         }}
                     />
                 )}
@@ -60,7 +57,11 @@ const PassiveSkillCard = ({ skill, onSkillHover, onSkillLeave, skillMatchesFilte
                         <img
                             src={`${OFFICER_IMAGE_BASE_URL}${skill.officerAvatar}`}
                             onError={e => {
-                                if (skill.officerAvatarB && e.target.src !== `${OFFICER_IMAGE_BASE_URL}${skill.officerAvatarB}`) {
+                                if (
+                                    skill.officerAvatarB &&
+                                    e.target.src !==
+                                        `${OFFICER_IMAGE_BASE_URL}${skill.officerAvatarB}`
+                                ) {
                                     e.target.src = `${OFFICER_IMAGE_BASE_URL}${skill.officerAvatarB}`;
                                 }
                             }}

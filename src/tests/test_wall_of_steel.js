@@ -5,15 +5,15 @@ const officersData = require('../database/officer.json');
 const { parseUpgradeData, applyUpgradeValues } = require('../utils/skillDataParser');
 
 // Find John Reilly
-const johnReilly = officersData.find(officer => officer.name === "John Reilly");
+const johnReilly = officersData.find(officer => officer.name === 'John Reilly');
 
 if (!johnReilly) {
-    console.log("❌ John Reilly not found!");
+    console.log('❌ John Reilly not found!');
     process.exit(1);
 }
 
-console.log("🎖️  REAL APPLICATION TEST: John Reilly - Wall of Steel");
-console.log("=" * 60);
+console.log('🎖️  REAL APPLICATION TEST: John Reilly - Wall of Steel');
+console.log('=' * 60);
 
 // Get the Wall of Steel skill (index 3)
 const wallOfSteelSkill = johnReilly.jn[3];

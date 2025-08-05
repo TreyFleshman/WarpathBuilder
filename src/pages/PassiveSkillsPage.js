@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import officersData from '../database/officer.json';
+import officersDataRaw from '../database/officer.json';
 import { usePassiveSkills, useSkillFilters } from '../utils/passiveSkillsHooks';
-import { skillMatchesFilter, createSkillHoverHandler, createSkillLeaveHandler } from '../utils/passiveSkillsUtils';
+import { skillMatchesFilter } from '../utils/passiveSkillsUtils';
 import { DEFAULT_FILTERS } from '../utils/constants';
 import FiltersSection from '../components/FiltersSection';
 import PassiveSkillCard from '../components/PassiveSkillCard';
-import SkillHoverModal from '../components/SkillHoverModal';
 import '../styles/PassiveSkillsPage.scss';
+
+// Convert officers object to array format
+const officersData = Object.values(officersDataRaw);
 
 const PassiveSkillsPage = () => {
     // State management
@@ -15,8 +17,6 @@ const PassiveSkillsPage = () => {
     const [selectedSkillTag, setSelectedSkillTag] = useState(DEFAULT_FILTERS.selectedSkillTag);
     const [skillFilterTerm, setSkillFilterTerm] = useState(DEFAULT_FILTERS.skillFilterTerm);
     const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
-    const [hoveredSkill, setHoveredSkill] = useState(null);
-    const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
 
     // Extract passive skills data
     const { passiveSkills, forceTypes, skillTags } = usePassiveSkills(officersData);
@@ -25,12 +25,8 @@ const PassiveSkillsPage = () => {
     const filters = { searchTerm, selectedForceType, selectedSkillTag, skillFilterTerm };
     const filteredPassiveSkills = useSkillFilters(passiveSkills, filters);
 
-    // Event handlers
-    const handleSkillHover = createSkillHoverHandler(setHoveredSkill, setHoverPosition);
-    const handleSkillLeave = createSkillLeaveHandler(setHoveredSkill);
-
     // Create a bound version of skillMatchesFilter for this component
-    const checkSkillMatch = (skill) => skillMatchesFilter(skill, skillFilterTerm);
+    const checkSkillMatch = skill => skillMatchesFilter(skill, skillFilterTerm);
 
     return (
         <div className="passive-skills-page">
@@ -67,23 +63,15 @@ const PassiveSkillsPage = () => {
 
                 {/* Passive Skills Grid */}
                 <div className="passive-skills-grid">
-                    {filteredPassiveSkills.map((skill) => (
+                    {filteredPassiveSkills.map(skill => (
                         <PassiveSkillCard
                             key={skill.id}
                             skill={skill}
-                            onSkillHover={handleSkillHover}
-                            onSkillLeave={handleSkillLeave}
                             skillMatchesFilter={checkSkillMatch}
                         />
                     ))}
                 </div>
             </div>
-
-            {/* Skill Hover Modal */}
-            <SkillHoverModal
-                hoveredSkill={hoveredSkill}
-                hoverPosition={hoverPosition}
-            />
         </div>
     );
 };

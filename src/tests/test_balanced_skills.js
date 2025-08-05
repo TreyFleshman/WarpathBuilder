@@ -8,7 +8,7 @@ let balancedSkillsFound = 0;
 officerData.forEach(officer => {
     if (officer.jn && Array.isArray(officer.jn)) {
         officer.jn.forEach((skill, index) => {
-            if (skill && typeof skill === 'object' && skill.tag === "Balanced") {
+            if (skill && typeof skill === 'object' && skill.tag === 'Balanced') {
                 console.log(`Officer: ${officer.nickname}`);
                 console.log(`  Skill Index: ${index}`);
                 console.log(`  Skill Name: ${skill.name}`);
@@ -31,7 +31,13 @@ let passiveBalancedSkills = 0;
 officerData.forEach(officer => {
     if (officer.jn && Array.isArray(officer.jn)) {
         officer.jn.forEach((skill, index) => {
-            if (skill && typeof skill === 'object' && index > 0 && index < 4 && skill.tag === "Balanced") {
+            if (
+                skill &&
+                typeof skill === 'object' &&
+                index > 0 &&
+                index < 4 &&
+                skill.tag === 'Balanced'
+            ) {
                 console.log(`Officer: ${officer.nickname} (Index ${index})`);
                 console.log(`  Skill: ${skill.name}`);
                 console.log(`  Tag: ${skill.tag}`);

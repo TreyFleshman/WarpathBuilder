@@ -5,10 +5,12 @@ const fs = require('fs');
 const path = require('path');
 
 // Load officers data
-const officersData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'database', 'officer.json'), 'utf8'));
+const officersData = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '..', 'database', 'officer.json'), 'utf8')
+);
 
 // Import our parsing functions (simplified for Node.js testing)
-const parseUpgradeData = (dataArray) => {
+const parseUpgradeData = dataArray => {
     const upgradeInfo = {};
 
     dataArray.forEach(item => {
@@ -26,7 +28,7 @@ const parseUpgradeData = (dataArray) => {
     return upgradeInfo;
 };
 
-const parseUpgradeLine = (line) => {
+const parseUpgradeLine = line => {
     if (!line || line.includes('UPGRADE PREVIEW')) return null;
 
     // Enhanced parsing for different formats
@@ -34,7 +36,7 @@ const parseUpgradeLine = (line) => {
         // Pattern: "Label: value1/value2/value3/value4/value5"
         /^([^:]+):\s*(.+)$/,
         // Pattern: "Label value1/value2/value3/value4/value5"
-        /^([^\/\d]+)\s+(.+)$/
+        /^([^\/\d]+)\s+(.+)$/,
     ];
 
     for (const pattern of patterns) {
@@ -44,10 +46,11 @@ const parseUpgradeLine = (line) => {
 
             if (valuesStr.includes('/')) {
                 const valueArray = valuesStr.split('/').map(v => v.trim());
-                if (valueArray.length >= 4) { // At least 4 levels
+                if (valueArray.length >= 4) {
+                    // At least 4 levels
                     return {
                         label: label.trim(),
-                        values: valueArray
+                        values: valueArray,
                     };
                 }
             }
@@ -66,7 +69,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue) => {
     const cleanBaseValue = baseValue.replace(/[^\d.]/g, '');
 
     if (!cleanNewValue || !cleanBaseValue) {
-        console.log(`  ❌ Failed: Invalid values (clean new: "${cleanNewValue}", clean base: "${cleanBaseValue}")`);
+        console.log(
+            `  ❌ Failed: Invalid values (clean new: "${cleanNewValue}", clean base: "${cleanBaseValue}")`
+        );
         return data;
     }
 
@@ -103,7 +108,7 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue) => {
     if (!matched) {
         const plusPatterns = [
             new RegExp(`\\+${cleanBaseValue}%`, 'g'),
-            new RegExp(`\\+${cleanBaseValue}\\b`, 'g')
+            new RegExp(`\\+${cleanBaseValue}\\b`, 'g'),
         ];
 
         for (const pattern of plusPatterns) {
@@ -202,7 +207,7 @@ const runComprehensiveTest = () => {
                 failedSkills.push({
                     officer: officer.name,
                     skill: skill.name,
-                    data: skill.data
+                    data: skill.data,
                 });
             } else {
                 skillsWithUpgrades++;

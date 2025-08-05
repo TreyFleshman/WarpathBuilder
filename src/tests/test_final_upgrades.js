@@ -6,24 +6,24 @@ const officersData = require('../database/officer.json');
 
 // Mock the REPLACEMENT_PATTERNS and functions from skillDataParser.js
 const REPLACEMENT_PATTERNS = {
-    "Dmg Buff": [
+    'Dmg Buff': [
         {
             pattern: /(\+?\d+(?:\.\d+)?%?)/g,
-            replacement: (newValue, groups) => newValue.includes('%') ? newValue : `${newValue}%`
-        }
+            replacement: (newValue, groups) => (newValue.includes('%') ? newValue : `${newValue}%`),
+        },
     ],
-    "Dmg Reduction": [
+    'Dmg Reduction': [
         {
             pattern: /(\+?\d+(?:\.\d+)?%?)/g,
-            replacement: (newValue, groups) => newValue.includes('%') ? newValue : `${newValue}%`
-        }
-    ]
+            replacement: (newValue, groups) => (newValue.includes('%') ? newValue : `${newValue}%`),
+        },
+    ],
 };
 
 /**
  * Escape special regex characters
  */
-const escapeRegex = (string) => {
+const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
@@ -139,7 +139,7 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
         if (!matched) {
             const plusPatterns = [
                 new RegExp(`\\+${escapeRegex(cleanBaseValue)}%`, 'g'),
-                new RegExp(`\\+${escapeRegex(cleanBaseValue)}\\b`, 'g')
+                new RegExp(`\\+${escapeRegex(cleanBaseValue)}\\b`, 'g'),
             ];
 
             for (const pattern of plusPatterns) {
@@ -173,8 +173,8 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
         if (!currentValue) return;
 
         // Strategy 1: Use predefined replacement patterns for known skill types
-        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(([patternKey]) =>
-            key.includes(patternKey) || key === patternKey
+        const patternConfig = Object.entries(REPLACEMENT_PATTERNS).find(
+            ([patternKey]) => key.includes(patternKey) || key === patternKey
         );
 
         if (patternConfig) {
@@ -186,7 +186,13 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
             });
         } else {
             // Strategy 2: Intelligent auto-detection for unknown patterns
-            currentData = applyIntelligentUpgrade(currentData, key, currentValue, values[0], values);
+            currentData = applyIntelligentUpgrade(
+                currentData,
+                key,
+                currentValue,
+                values[0],
+                values
+            );
         }
     });
 
@@ -195,56 +201,57 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
 
 // Test specific problem cases
 const testSpecificCases = () => {
-    console.log("🔍 Testing Final Enhanced System on Specific Problem Cases:");
-    console.log("=" * 60);
+    console.log('🔍 Testing Final Enhanced System on Specific Problem Cases:');
+    console.log('=' * 60);
 
     // Test Case 1: Fire Suppression - Randall Miller
     // Issue: Skill text has "+12%" but upgrade preview base is "10%"
-    const fireSuppressionData = "Fire Suppression: Fire Suppression Capacity +12% (Non-Stacking);When Equipped: +90 Rage";
+    const fireSuppressionData =
+        'Fire Suppression: Fire Suppression Capacity +12% (Non-Stacking);When Equipped: +90 Rage';
     const fireSuppressionUpgrade = {
-        "Dmg Buff": ["10%", "12%", "14%", "16%", "18%"]
+        'Dmg Buff': ['10%', '12%', '14%', '16%', '18%'],
     };
 
-    console.log("\n🧪 Test 1: Fire Suppression (Randall Miller)");
-    console.log("Original:", fireSuppressionData);
-    console.log("Upgrade Values:", JSON.stringify(fireSuppressionUpgrade["Dmg Buff"]));
+    console.log('\n🧪 Test 1: Fire Suppression (Randall Miller)');
+    console.log('Original:', fireSuppressionData);
+    console.log('Upgrade Values:', JSON.stringify(fireSuppressionUpgrade['Dmg Buff']));
 
     const fireResult = applyUpgradeValues(fireSuppressionData, fireSuppressionUpgrade, 3);
-    console.log("Result Level 3:", fireResult);
-    console.log("Expected: Should change +12% to +14%");
-    console.log("Success:", fireResult.includes("14%") ? "✅" : "❌");
+    console.log('Result Level 3:', fireResult);
+    console.log('Expected: Should change +12% to +14%');
+    console.log('Success:', fireResult.includes('14%') ? '✅' : '❌');
 
     // Test Case 2: Battle Command - Percy
     // Issue: Skill text has "+5%" but upgrade preview base is "3%"
-    const battleCommandData = "Battle Command: All DMG +5%;Max Number of Equipped:1";
+    const battleCommandData = 'Battle Command: All DMG +5%;Max Number of Equipped:1';
     const battleCommandUpgrade = {
-        "Dmg Buff": ["3%", "5%", "7%", "9%", "11%"]
+        'Dmg Buff': ['3%', '5%', '7%', '9%', '11%'],
     };
 
-    console.log("\n🧪 Test 2: Battle Command (Percy)");
-    console.log("Original:", battleCommandData);
-    console.log("Upgrade Values:", JSON.stringify(battleCommandUpgrade["Dmg Buff"]));
+    console.log('\n🧪 Test 2: Battle Command (Percy)');
+    console.log('Original:', battleCommandData);
+    console.log('Upgrade Values:', JSON.stringify(battleCommandUpgrade['Dmg Buff']));
 
     const battleResult = applyUpgradeValues(battleCommandData, battleCommandUpgrade, 4);
-    console.log("Result Level 4:", battleResult);
-    console.log("Expected: Should change +5% to +9%");
-    console.log("Success:", battleResult.includes("9%") ? "✅" : "❌");
+    console.log('Result Level 4:', battleResult);
+    console.log('Expected: Should change +5% to +9%');
+    console.log('Success:', battleResult.includes('9%') ? '✅' : '❌');
 
     // Test Case 3: The Lord's Domain - Bekoe Yeboah
     // Issue: Spaced numbers "1 0%" instead of "10%"
     const lordsDomainData = "The Lord's Domain: Chance of Triggering Critical DMG +1 0%";
     const lordsDomainUpgrade = {
-        "Dmg Buff": ["10%", "12%", "14%", "16%", "18%"]
+        'Dmg Buff': ['10%', '12%', '14%', '16%', '18%'],
     };
 
     console.log("\n🧪 Test 3: The Lord's Domain (Bekoe Yeboah)");
-    console.log("Original:", lordsDomainData);
-    console.log("Upgrade Values:", JSON.stringify(lordsDomainUpgrade["Dmg Buff"]));
+    console.log('Original:', lordsDomainData);
+    console.log('Upgrade Values:', JSON.stringify(lordsDomainUpgrade['Dmg Buff']));
 
     const lordsResult = applyUpgradeValues(lordsDomainData, lordsDomainUpgrade, 2);
-    console.log("Result Level 2:", lordsResult);
-    console.log("Expected: Should change +1 0% to +12%");
-    console.log("Success:", lordsResult.includes("12%") ? "✅" : "❌");
+    console.log('Result Level 2:', lordsResult);
+    console.log('Expected: Should change +1 0% to +12%');
+    console.log('Success:', lordsResult.includes('12%') ? '✅' : '❌');
 };
 
 // Run the tests

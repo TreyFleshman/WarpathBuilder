@@ -1,9 +1,11 @@
-const fs = require('fs');
+/**
+ * Shared test utilities for skill upgrade testing
+ * Consolidates duplicated functions across test files
+ */
 
-// Import the real data
-const officersData = require('../database/officer.json');
-
-// Copy the actual functions from skillDataParser.js
+/**
+ * Parse upgrade data from officer skill data arrays
+ */
 const parseUpgradeData = dataArray => {
     const upgradeInfo = {};
 
@@ -22,6 +24,9 @@ const parseUpgradeData = dataArray => {
     return upgradeInfo;
 };
 
+/**
+ * Parse individual upgrade line
+ */
 const parseUpgradeLine = line => {
     if (!line || line.includes('UPGRADE PREVIEW')) return null;
 
@@ -44,7 +49,6 @@ const parseUpgradeLine = line => {
 
     // Handle non-colon format: "Dmg Coefficient 550/650/800/950/1200"
     if (line.includes('/')) {
-        // Match multi-word labels: "Word Word numbers/numbers/numbers"
         const match = line.match(/^([A-Za-z\s]+?)\s+(\d+(?:\.\d+)?(?:[%]?)\/.*)/);
         if (match) {
             const valueArray = match[2].split('/').map(v => v.trim());
@@ -77,39 +81,43 @@ const parseUpgradeLine = line => {
     return null;
 };
 
+/**
+ * Escape special regex characters
+ */
 const escapeRegex = string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
+/**
+ * Check if two numbers are close enough to be considered the same
+ */
 const isNumberClose = (num1, num2, tolerance = 0.1) => {
     const n1 = parseFloat(num1);
     const n2 = parseFloat(num2);
     if (isNaN(n1) || isNaN(n2)) return false;
-
     return Math.abs(n1 - n2) <= tolerance;
 };
 
+/**
+ * Try contextual replacement when exact matches fail
+ */
 const tryContextualReplacement = (data, upgradeKey, newValue, baseValue) => {
     const cleanNewValue = newValue.replace(/[^\d.]/g, '');
     const cleanBaseValue = baseValue.replace(/[^\d.]/g, '');
 
     // Extract all numbers with % from the text
     const percentNumbers = data.match(/\d+(?:\.\d+)?%/g) || [];
-
-    // Extract all standalone numbers
     const standaloneNumbers = data.match(/\b\d+(?:\.\d+)?\b/g) || [];
 
     // For percentage-based upgrades, prioritize % numbers
     if (newValue.includes('%')) {
         for (const percentNum of percentNumbers) {
             const numValue = percentNum.replace('%', '');
-            // If this number is close to our base value, replace it
             if (isNumberClose(numValue, cleanBaseValue)) {
                 return data.replace(percentNum, newValue);
             }
         }
     }
-
     // For non-percentage upgrades, try standalone numbers
     else {
         for (const num of standaloneNumbers) {
@@ -122,6 +130,9 @@ const tryContextualReplacement = (data, upgradeKey, newValue, baseValue) => {
     return data;
 };
 
+/**
+ * Intelligently replace values in skill text by finding numeric patterns
+ */
 const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValues = []) => {
     const cleanNewValue = newValue.replace(/[^\d.]/g, '');
     const cleanBaseValue = baseValue.replace(/[^\d.]/g, '');
@@ -131,7 +142,7 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
     let result = data;
     let matched = false;
 
-    // Strategy 1: Try to match any value from the upgrade array (not just base value)
+    // Strategy 1: Try to match any value from the upgrade array
     if (allValues && allValues.length > 0) {
         for (const value of allValues) {
             const cleanValue = value.replace(/[^\d.]/g, '');
@@ -195,6 +206,9 @@ const applyIntelligentUpgrade = (data, upgradeKey, newValue, baseValue, allValue
     return result;
 };
 
+/**
+ * Apply upgrade values to skill data
+ */
 const applyUpgradeValues = (data, upgradeInfo, level) => {
     let currentData = data;
 
@@ -208,51 +222,12 @@ const applyUpgradeValues = (data, upgradeInfo, level) => {
     return currentData;
 };
 
-// Find John Reilly
-const johnReilly = officersData.find(officer => officer.name === 'John Reilly');
-
-if (!johnReilly) {
-    console.log('❌ John Reilly not found!');
-    process.exit(1);
-}
-
-console.log('🎖️  COMPREHENSIVE TEST: All John Reilly Skills');
-console.log('=' * 70);
-
-// Test all skills
-johnReilly.jn.forEach((skill, skillIndex) => {
-    console.log(`\n\n📋 SKILL ${skillIndex}: ${skill.name}`);
-    console.log('-' * 50);
-
-    console.log(`📝 Raw Skill Data:`);
-    skill.data.forEach((item, index) => {
-        console.log(`   [${index}]: "${item}"`);
-    });
-
-    // Parse upgrade data
-    const upgradeData = parseUpgradeData(skill.data);
-    console.log(`\n📊 Parsed Upgrade Data:`, JSON.stringify(upgradeData, null, 2));
-
-    if (Object.keys(upgradeData).length === 0) {
-        console.log(`⚠️  No upgrade data found for this skill`);
-        return;
-    }
-
-    // Test levels 1, 3, and 5
-    [1, 3, 5].forEach(level => {
-        console.log(`\n🧪 Level ${level}:`);
-        const baseText = skill.data[0];
-        const result = applyUpgradeValues(baseText, upgradeData, level);
-
-        console.log(`   Base: "${baseText}"`);
-        console.log(`   L${level}:   "${result}"`);
-
-        if (result === baseText && level > 1) {
-            console.log(`   ❌ FAILED: No changes for Level ${level}`);
-        } else if (level > 1) {
-            console.log(`   ✅ SUCCESS: Changes applied for Level ${level}`);
-        }
-    });
-});
-
-console.log(`\n\n🏁 Test Complete!`);
+module.exports = {
+    parseUpgradeData,
+    parseUpgradeLine,
+    escapeRegex,
+    isNumberClose,
+    tryContextualReplacement,
+    applyIntelligentUpgrade,
+    applyUpgradeValues,
+};

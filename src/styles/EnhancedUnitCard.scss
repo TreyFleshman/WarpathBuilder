@@ -4,7 +4,7 @@
     background: linear-gradient(145deg, #2c3e50, #34495e);
     border-radius: 16px;
     padding: 0;
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.3),
         0 2px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
@@ -18,7 +18,7 @@
 
 .unit-card.enhanced:hover {
     transform: translateY(-4px);
-    box-shadow: 
+    box-shadow:
         0 12px 48px rgba(0, 0, 0, 0.4),
         0 4px 16px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.2);
@@ -63,11 +63,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(0, 0, 0, 0.1) 0%,
-        rgba(0, 0, 0, 0.3) 100%
-    );
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
     pointer-events: none;
 }
 
@@ -79,14 +75,24 @@
 }
 
 .grade-badge {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(212, 175, 55, 0.8);
+    border-radius: 12px;
+    padding: 6px 10px;
+    color: #d4af37;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
 .grade-badge:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    border-color: #ffd700;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
 }
 
 .service-indicator {
@@ -213,19 +219,19 @@
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
-    
+
     // Default purple background (fallback)
     background: linear-gradient(135deg, #9b59b6, #8e44ad);
-    
+
     // Camp-specific colors
     &.camp-vanguard {
         background: linear-gradient(135deg, #6c757d, #495057);
     }
-    
+
     &.camp-liberty {
         background: linear-gradient(135deg, #007bff, #0056b3);
     }
-    
+
     &.camp-martyrs {
         background: linear-gradient(135deg, #dc3545, #c82333);
     }
@@ -242,12 +248,12 @@
         height: 180px;
         margin-bottom: 16px;
     }
-    
+
     .grade-badge-container {
         top: 8px;
         right: 8px;
     }
-    
+
     .service-indicator {
         top: 8px;
         left: 8px;
@@ -255,14 +261,14 @@
         height: 32px;
         font-size: 1rem;
     }
-    
+
     .unit-info.enhanced {
         padding: 0;
         display: flex;
         flex-direction: column;
         gap: 12px;
     }
-    
+
     .unit-name {
         font-size: 1.1rem;
         min-height: auto;
@@ -332,12 +338,12 @@
         height: 160px;
         margin-bottom: 12px;
     }
-    
+
     .grade-badge-container {
         top: 6px;
         right: 6px;
     }
-    
+
     .service-indicator {
         top: 6px;
         left: 6px;
@@ -345,11 +351,11 @@
         height: 28px;
         font-size: 0.9rem;
     }
-    
+
     .unit-info.enhanced {
         gap: 10px;
     }
-    
+
     .unit-name {
         font-size: 1rem;
         line-height: 1.2;

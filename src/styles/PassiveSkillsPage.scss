@@ -200,6 +200,7 @@
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
+    padding-top: 1rem;
 }
 
 .passive-skill-card {
@@ -211,6 +212,9 @@
     backdrop-filter: blur(5px);
     position: relative;
     overflow: hidden;
+    height: 380px;
+    display: flex;
+    flex-direction: column;
 }
 
 .passive-skill-card::before {
@@ -225,19 +229,9 @@
     transition: opacity 0.3s ease;
 }
 
-.passive-skill-card:hover {
-    transform: translateY(-5px);
-    border-color: #ffd700;
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
-}
-
-.passive-skill-card:hover::before {
-    opacity: 1;
-}
-
 .passive-skill-card.skill-matched {
-    border-color: #00ff88;
-    background: linear-gradient(145deg, rgba(0, 255, 136, 0.1), rgba(40, 40, 40, 0.4));
+    border-color: #4a9eff;
+    background: linear-gradient(145deg, rgba(74, 158, 255, 0.1), rgba(40, 40, 40, 0.4));
 }
 
 /* Skill Header */
@@ -305,25 +299,25 @@
 }
 
 /* Specific styling for different tag types */
-.passive-skill-card .skill-tag[data-tag="Offense"] {
+.passive-skill-card .skill-tag[data-tag='Offense'] {
     background: rgba(255, 69, 58, 0.2);
     color: #ff453a;
     border: 1px solid rgba(255, 69, 58, 0.4);
 }
 
-.passive-skill-card .skill-tag[data-tag="Protection"] {
+.passive-skill-card .skill-tag[data-tag='Protection'] {
     background: rgba(52, 199, 89, 0.2);
     color: #34c759;
     border: 1px solid rgba(52, 199, 89, 0.4);
 }
 
-.passive-skill-card .skill-tag[data-tag="Special"] {
+.passive-skill-card .skill-tag[data-tag='Special'] {
     background: rgba(175, 82, 222, 0.2);
     color: #af52de;
     border: 1px solid rgba(175, 82, 222, 0.4);
 }
 
-.passive-skill-card .skill-tag[data-tag="Balanced"] {
+.passive-skill-card .skill-tag[data-tag='Balanced'] {
     background: rgba(255, 149, 0, 0.2);
     color: #ff9500;
     border: 1px solid rgba(255, 149, 0, 0.4);
@@ -331,13 +325,13 @@
 
 .passive-skill-card .skill-match-indicator {
     display: inline-block;
-    background: rgba(0, 255, 136, 0.2);
-    color: #00ff88;
+    background: rgba(74, 158, 255, 0.2);
+    color: #4a9eff;
     padding: 0.3rem 0.8rem;
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: bold;
-    border: 1px solid rgba(0, 255, 136, 0.4);
+    border: 1px solid rgba(74, 158, 255, 0.4);
     margin-left: 0.5rem;
 }
 
@@ -346,6 +340,9 @@
     margin: 1rem 0;
     color: #e8f5e8;
     line-height: 1.6;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .passive-skill-card .skill-description p {
@@ -360,6 +357,7 @@
     border-left: 3px solid #ffd700;
     font-size: 0.95rem;
     line-height: 1.5;
+    flex: 1;
 }
 
 /* Officer Info */
@@ -526,21 +524,21 @@
     .passive-skills-page .page-container {
         padding: 1rem;
     }
-    
+
     .passive-skills-page .filters-row {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .passive-skills-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .passive-skills-page .page-title {
         font-size: 2rem;
     }
-    
+
     .passive-skills-page .title-icon {
         font-size: 2.5rem;
     }
