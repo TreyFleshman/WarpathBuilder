@@ -2,6 +2,23 @@
 import React from 'react';
 import GradeBadge from './GradeBadge';
 
+// Helper function to get camp-specific CSS class
+const getCampClass = (campName) => {
+    if (!campName) return '';
+
+    const normalizedCamp = campName.toLowerCase().trim();
+
+    if (normalizedCamp.includes('vanguard')) {
+        return 'camp-vanguard';
+    } else if (normalizedCamp.includes('liberty')) {
+        return 'camp-liberty';
+    } else if (normalizedCamp.includes('martys')) {
+        return 'camp-martyrs';
+    }
+
+    return ''; // Default styling will be used
+};
+
 const UnitCard = ({ unit, onClick }) => {
     return (
         <div className="unit-card enhanced" onClick={onClick}>
@@ -51,7 +68,15 @@ const UnitCard = ({ unit, onClick }) => {
 
             <div className="unit-info enhanced">
                 <h3 className="unit-name">{unit.units_name || unit.units}</h3>
-                <div className="unit-type-badge">{unit.normalizedType}</div>
+
+                <div className="unit-badges-row">
+                    <div className="unit-type-badge">{unit.normalizedType}</div>
+                    {unit.normalizedCamps && (
+                        <div className={`unit-camps-badge ${getCampClass(unit.normalizedCamps)}`}>
+                            {unit.normalizedCamps}
+                        </div>
+                    )}
+                </div>
 
                 <div className="unit-stats enhanced">
                     <div className="stat-item firepower">
@@ -65,10 +90,6 @@ const UnitCard = ({ unit, onClick }) => {
                         <span className="stat-value">{(unit.health || unit.durability)?.toLocaleString() || 'N/A'}</span>
                     </div>
                 </div>
-
-                {unit.normalizedCamps && (
-                    <div className="unit-camps-badge">{unit.normalizedCamps}</div>
-                )}
             </div>
         </div>
     );
