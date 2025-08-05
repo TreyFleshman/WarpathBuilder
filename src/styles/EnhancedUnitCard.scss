@@ -233,8 +233,14 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .unit-card.enhanced {
+        min-height: 400px;
+        padding: 16px;
+    }
+
     .unit-image-container.enhanced {
         height: 180px;
+        margin-bottom: 16px;
     }
     
     .grade-badge-container {
@@ -251,11 +257,131 @@
     }
     
     .unit-info.enhanced {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .unit-name {
+        font-size: 1.1rem;
+        min-height: auto;
+        margin-bottom: 0;
+        line-height: 1.3;
+        text-align: center;
+    }
+
+    .unit-badges-row {
+        gap: 8px;
+        margin-bottom: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .unit-type-badge,
+    .unit-camps-badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        white-space: nowrap;
+    }
+
+    .unit-stats.enhanced {
+        gap: 12px;
+        margin-bottom: 0;
+        margin-top: auto;
+
+        .stat-item {
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 93, 35, 0.5);
+
+            .stat-icon {
+                font-size: 1.3rem;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+                margin-bottom: 4px;
+                color: #b0b0b0;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+                font-weight: 700;
+                color: #d4af37;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .unit-card.enhanced {
+        min-height: 350px;
         padding: 12px;
+    }
+
+    .unit-image-container.enhanced {
+        height: 160px;
+        margin-bottom: 12px;
+    }
+    
+    .grade-badge-container {
+        top: 6px;
+        right: 6px;
+    }
+    
+    .service-indicator {
+        top: 6px;
+        left: 6px;
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+    
+    .unit-info.enhanced {
+        gap: 10px;
     }
     
     .unit-name {
         font-size: 1rem;
-        min-height: 2.4em;
+        line-height: 1.2;
+    }
+
+    .unit-badges-row {
+        gap: 6px;
+    }
+
+    .unit-type-badge,
+    .unit-camps-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .unit-stats.enhanced {
+        gap: 8px;
+
+        .stat-item {
+            padding: 8px 6px;
+
+            .stat-icon {
+                font-size: 1.1rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .stat-value {
+                font-size: 0.9rem;
+            }
+        }
     }
 }
