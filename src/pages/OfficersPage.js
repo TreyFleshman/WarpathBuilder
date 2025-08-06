@@ -7,6 +7,7 @@ const officersData = Object.values(officersDataRaw);
 const OfficersPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedForceType, setSelectedForceType] = useState('all');
+    const [selectedCharacterTag, setSelectedCharacterTag] = useState('all');
     const [skillFilterTerm, setSkillFilterTerm] = useState('');
     const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
     const [selectedOfficer, setSelectedOfficer] = useState(null);
@@ -46,18 +47,39 @@ const OfficersPage = () => {
     ];
 
     // Process and organize officers data
-    const { processedOfficers, forceTypes } = useMemo(() => {
+    const { processedOfficers, forceTypes, characterTags } = useMemo(() => {
         const processed = officersData.map(officer => ({
             ...officer,
             normalizedArmy: (officer.army || 'Unknown').toUpperCase(),
             forceType: officer.army === 'AirForce' ? 'Air Force' : 'Ground Forces',
         }));
 
-        const uniqueForceTypes = [...new Set(processed.map(officer => officer.forceType))].sort();
+        // Custom order for force types - Ground Forces first, then Air Force
+        const uniqueForceTypes = [...new Set(processed.map(officer => officer.forceType))].sort(
+            (a, b) => {
+                if (a === 'Ground Forces') return -1;
+                if (b === 'Ground Forces') return 1;
+                return a.localeCompare(b);
+            }
+        );
+
+        // Extract all unique character tags
+        const allCharacterTags = new Set();
+        processed.forEach(officer => {
+            if (officer.character && Array.isArray(officer.character)) {
+                officer.character.forEach(char => {
+                    if (char && char.name) {
+                        allCharacterTags.add(char.name);
+                    }
+                });
+            }
+        });
+        const uniqueCharacterTags = [...allCharacterTags].sort();
 
         return {
             processedOfficers: processed,
             forceTypes: uniqueForceTypes,
+            characterTags: uniqueCharacterTags,
         };
     }, []);
 
@@ -69,6 +91,12 @@ const OfficersPage = () => {
                 .includes(searchTerm.toLowerCase());
             const matchesForceType =
                 selectedForceType === 'all' || officer.forceType === selectedForceType;
+
+            // Character tag filter logic
+            const matchesCharacterTag =
+                selectedCharacterTag === 'all' ||
+                (officer.character &&
+                    officer.character.some(char => char && char.name === selectedCharacterTag));
 
             // Skill filter logic
             let matchesSkillFilter = true;
@@ -102,7 +130,7 @@ const OfficersPage = () => {
                 });
             }
 
-            return matchesSearch && matchesForceType && matchesSkillFilter;
+            return matchesSearch && matchesForceType && matchesCharacterTag && matchesSkillFilter;
         });
 
         // Sort officers alphabetically by nickname
@@ -111,7 +139,7 @@ const OfficersPage = () => {
         });
 
         return filtered;
-    }, [processedOfficers, searchTerm, selectedForceType, skillFilterTerm]);
+    }, [processedOfficers, searchTerm, selectedForceType, selectedCharacterTag, skillFilterTerm]);
 
     const handleOfficerClick = officer => {
         setSelectedOfficer(officer);
@@ -225,21 +253,44 @@ const OfficersPage = () => {
                         <div className="filters-row">
                             <div className="filter-group">
                                 <label>Force Type:</label>
+                                <div className="force-type-tabs">
+                                    <button
+                                        className={`force-tab ${selectedForceType === 'all' ? 'active' : ''}`}
+                                        onClick={() => setSelectedForceType('all')}
+                                    >
+                                        All Forces
+                                    </button>
+                                    {forceTypes.map(forceType => (
+                                        <button
+                                            key={forceType}
+                                            className={`force-tab ${selectedForceType === forceType ? 'active' : ''}`}
+                                            onClick={() => setSelectedForceType(forceType)}
+                                        >
+                                            {forceType}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <label>Character Type:</label>
                                 <select
-                                    value={selectedForceType}
-                                    onChange={e => setSelectedForceType(e.target.value)}
+                                    value={selectedCharacterTag}
+                                    onChange={e => setSelectedCharacterTag(e.target.value)}
                                     className="filter-select"
                                 >
-                                    <option value="all">All Forces</option>
-                                    {forceTypes.map(forceType => (
-                                        <option key={forceType} value={forceType}>
-                                            {forceType}
+                                    <option value="all">All Character Types</option>
+                                    {characterTags.map(tag => (
+                                        <option key={tag} value={tag}>
+                                            {tag}
                                         </option>
                                     ))}
                                 </select>
                             </div>
+                        </div>
 
-                            <div className="filter-group">
+                        <div className="filters-row skill-filter-row">
+                            <div className="filter-group skill-filter-group">
                                 <label>Skill Filter:</label>
                                 <div className="filter-control">
                                     <input
@@ -309,14 +360,21 @@ const OfficersPage = () => {
                                 Clear skill filter ✕
                             </button>
                         )}
+                        {selectedCharacterTag !== 'all' && (
+                            <button
+                                onClick={() => setSelectedCharacterTag('all')}
+                                className="clear-character-filter"
+                                title="Clear character type filter"
+                            >
+                                Clear character filter ✕
+                            </button>
+                        )}
                     </div>
                 </div>
 
                 {/* Officers Grid */}
                 <div className="officers-grid">
                     {filteredAndSortedOfficers.map(officer => {
-                        const skills = getSkillsByType(officer);
-
                         return (
                             <div
                                 key={officer.id}
@@ -349,6 +407,15 @@ const OfficersPage = () => {
                                         <div className="officer-force-type">
                                             {officer.forceType}
                                         </div>
+                                        {officer.character && officer.character.length > 0 && (
+                                            <div className="character-tags">
+                                                {officer.character.map((char, index) => (
+                                                    <span key={index} className="character-tag">
+                                                        {char.name}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -467,6 +534,26 @@ const OfficersPage = () => {
                                                     {selectedOfficer.forceType}
                                                 </span>
                                             </div>
+                                            {selectedOfficer.character &&
+                                                selectedOfficer.character.length > 0 && (
+                                                    <div className="detail-row">
+                                                        <span className="detail-label">
+                                                            Character Types:
+                                                        </span>
+                                                        <div className="character-tags-modal">
+                                                            {selectedOfficer.character.map(
+                                                                (char, index) => (
+                                                                    <span
+                                                                        key={index}
+                                                                        className="character-tag-modal"
+                                                                    >
+                                                                        {char.name}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
                                         </div>
                                     </div>
 
